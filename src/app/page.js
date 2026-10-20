@@ -1,69 +1,201 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+
+const services = [
+  {
+    icon: "bi-lightning-charge-fill",
+    title: "Electrical Wiring",
+    description:
+      "New wiring, rewiring, DB installation, lighting solutions and electrical repairs.",
+  },
+  {
+    icon: "bi-droplet-fill",
+    title: "Water Purification",
+    description:
+      "RO systems, UV and UF purifiers, water filters and maintenance services.",
+  },
+  {
+    icon: "bi-building",
+    title: "Residential & Commercial",
+    description:
+      "Electrical and plumbing support for homes, offices, shops and industrial units.",
+  },
+  {
+    icon: "bi-arrow-up-square-fill",
+    title: "Elevator Maintenance",
+    description:
+      "Regular maintenance, safety checks and breakdown support for elevators.",
+  },
+];
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.js</code> file.
-          </h1>
+    <main>
+
+      {/* Hero */}
+      <section className="hero-section">
+        <div className="container">
+          <div className="row align-items-center g-5">
+            <div className="col-lg-7">
+              <span className="hero-badge">
+                <i className="bi bi-patch-check-fill me-2" />
+                Your Trusted Service Partner
+              </span>
+
+              <h1 className="hero-title mt-4">
+                Reliable Solutions for{" "}
+                <span>Every Space.</span>
+              </h1>
+
+              <p className="hero-description mt-3">
+                From electrical wiring and water purification to building
+                support and elevator maintenance, Shree Enterprises helps
+                keep your spaces running smoothly.
+              </p>
+
+              <div className="d-flex flex-wrap gap-3 mt-4">
+                <a href="/contact" className="btn btn-warning btn-lg rounded-pill px-4">
+                  Get an Enquiry <i className="bi bi-arrow-right ms-2" />
+                </a>
+
+                <a href="tel:8626095720" className="btn btn-outline-light btn-lg rounded-pill px-4">
+                  <i className="bi bi-telephone me-2" />
+                  Call Us
+                </a>
+              </div>
+
+              <div className="hero-note mt-4">
+                <i className="bi bi-geo-alt-fill me-2" />
+                Proudly serving Ambegaon Kh, Pune
+              </div>
+            </div>
+
+            <div className="col-lg-5">
+              <div className="hero-visual">
+                <div className="hero-visual-icon">
+                  <i className="bi bi-tools" />
+                </div>
+                <p className="visual-eyebrow">SHREE ENTERPRISES</p>
+                <h2>Quality Service.<br />Lasting Solutions.</h2>
+                <div className="visual-line" />
+                <p className="mb-0">
+                  Electrical · Water · Maintenance
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Services */}
+      <section className="section-padding">
+        <div className="container">
+          <div className="section-heading text-center">
+            <span className="section-label">WHAT WE DO</span>
+            <h2>Our Services</h2>
+            <p>
+              Practical solutions to meet your home and business needs.
+            </p>
+          </div>
+
+          <div className="row g-4 mt-3">
+            {services.map((service) => (
+              <div className="col-sm-6 col-lg-3" key={service.title}>
+                <article className="service-card h-100">
+                  <div className="service-icon">
+                    <i className={`bi ${service.icon}`} />
+                  </div>
+                  <h3>{service.title}</h3>
+                  <p>{service.description}</p>
+                  <a href="/services" className="service-link">
+                    Explore service <i className="bi bi-arrow-right ms-1" />
+                  </a>
+                </article>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us */}
+      <section className="benefits-section section-padding">
+        <div className="container">
+          <div className="row align-items-center g-5">
+            <div className="col-lg-6">
+              <span className="section-label">WHY SHREE ENTERPRISES</span>
+              <h2 className="display-6 fw-bold mt-3">
+                One trusted partner for your service needs.
+              </h2>
+              <p className="text-secondary mt-3">
+                We bring multiple essential services together, making it
+                easier to find support for your home, office or business.
+              </p>
+            </div>
+
+            <div className="col-lg-6">
+              <div className="benefit-item">
+                <i className="bi bi-check-circle-fill" />
+                <div>
+                  <h3>Multiple Services</h3>
+                  <p>Electrical, purification and maintenance solutions.</p>
+                </div>
+              </div>
+
+              <div className="benefit-item">
+                <i className="bi bi-chat-dots-fill" />
+                <div>
+                  <h3>Easy Enquiries</h3>
+                  <p>Contact us by phone or WhatsApp for your requirements.</p>
+                </div>
+              </div>
+
+              <div className="benefit-item">
+                <i className="bi bi-house-check-fill" />
+                <div>
+                  <h3>Residential & Commercial</h3>
+                  <p>Services for different types of properties and spaces.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Offers */}
+      <section className="section-padding">
+        <div className="container">
+          <div className="offer-banner">
+            <div>
+              <span className="offer-label">SPECIAL OFFERS</span>
+              <h2>Looking for the right solution?</h2>
+              <p className="mb-0">
+                Contact us to discuss your service needs and available offers.
+              </p>
+            </div>
+            <a href="/offers" className="btn btn-warning rounded-pill px-4">
+              View Offers <i className="bi bi-arrow-right ms-2" />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact CTA */}
+      <section className="contact-section section-padding">
+        <div className="container text-center">
+          <span className="section-label">LET'S CONNECT</span>
+          <h2>Need help with a service?</h2>
           <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
+            Tell us what you need. We’ll help you take the next step.
           </p>
+
+          <div className="d-flex justify-content-center flex-wrap gap-3 mt-4">
+            <a href="/contact" className="btn btn-primary btn-lg rounded-pill px-4">
+              Send an Enquiry
+            </a>
+            <a href="tel:8626095720" className="btn btn-outline-primary btn-lg rounded-pill px-4">
+              <i className="bi bi-telephone me-2" /> 86260 95720
+            </a>
+          </div>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }
