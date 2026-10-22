@@ -18,8 +18,15 @@ const INITIAL_FORM_DATA = {
     preferredTime: "",
 };
 
-export default function EnquiryForm({ onClose }) {
-    const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+export default function EnquiryForm({ onClose, defaultService = "" }) {
+    const serviceList = defaultService && !SERVICES.includes(defaultService)
+        ? [defaultService, ...SERVICES]
+        : SERVICES;
+
+    const [formData, setFormData] = useState({
+        ...INITIAL_FORM_DATA,
+        service: defaultService || "",
+    });
     const [status, setStatus] = useState({ type: "", message: "" });
 
     const handleChange = (e) => {
@@ -46,7 +53,6 @@ export default function EnquiryForm({ onClose }) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
-            console.log(formData);
 
             const data = await response.json();
 
@@ -59,8 +65,6 @@ export default function EnquiryForm({ onClose }) {
                 setTimeout(() => {
                     onClose?.();
                 }, 2500);
-
-                // console.log(INITIAL_FORM_DATA);
             } else {
                 throw new Error(data.error || "Failed to send message");
             }
@@ -123,7 +127,7 @@ export default function EnquiryForm({ onClose }) {
                             onChange={handleChange}
                         >
                             <option value="">-- Select a service --</option>
-                            {SERVICES.map((service) => (
+                            {serviceList.map((service) => (
                                 <option key={service} value={service}>
                                     {service}
                                 </option>

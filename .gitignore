@@ -57,3 +57,7 @@ next-env.d.ts
 # Temporary files
 *.tmp
 *.swp
+
+# Sensitive token dumps
+EAAPlaHpqFHIBSx06mU3I8XOh4rQhtBRAeP.txt
+*.token

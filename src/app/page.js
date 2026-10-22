@@ -189,7 +189,7 @@ export default function Home() {
       {/* Contact CTA */}
       <section className="contact-section section-padding">
         <div className="container text-center">
-          <span className="section-label">LET'S CONNECT</span>
+          <span className="section-label">LET&apos;S CONNECT</span>
           <h2>Need help with a service?</h2>
           <p>
             Tell us what you need. We’ll help you take the next step.
