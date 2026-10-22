@@ -5,9 +5,10 @@ export async function POST(request) {
         const body = await request.json();
         const { name, phone, service, preferredTime, message } = body;
 
+        // Basic validation
         if (!name || !phone || !service) {
             return NextResponse.json(
-                { success: false, error: "Missing required fields" },
+                { success: false, error: "Missing required fields (Name, Phone, or Service)." },
                 { status: 400 }
             );
         }
@@ -16,33 +17,35 @@ export async function POST(request) {
         const phoneNumberId = process.env.META_PHONE_NUMBER_ID;
         const ownerNumber = process.env.OWNER_WHATSAPP_NUMBER;
 
+        // Ensure credentials exist before sending request
         if (!accessToken || !phoneNumberId || !ownerNumber) {
             return NextResponse.json(
-                { success: false, error: "Meta API credentials are not configured on the server." },
+                {
+                    success: false,
+                    error: "Meta API credentials are missing in server environment variables (.env.local)."
+                },
                 { status: 500 }
             );
         }
 
-        // Format the message template
-        const whatsappMessage = [
-            "🔔 *New Website Enquiry - Shree Enterprises*",
+        const messageBody = [
+            "🔔 *New Website Enquiry*",
             "",
             `👤 *Name:* ${name.trim()}`,
             `📞 *Phone:* ${phone.trim()}`,
-            `🔧 *Service Required:* ${service}`,
+            `🔧 *Service:* ${service.trim()}`,
             preferredTime ? `⏰ *Preferred Time:* ${preferredTime.trim()}` : "",
             message ? `💬 *Message:* ${message.trim()}` : "",
             "",
             "---",
-            "Sent automatically via Meta Cloud API",
         ]
             .filter(Boolean)
             .join("\n");
 
-        // Meta Graph API Endpoint for sending messages
-        const url = `https://graph.facebook.com/v17.0/${phoneNumberId}/messages`;
+        // Meta Graph API Endpoint
+        const metaUrl = `https://graph.facebook.com/v18.0/${phoneNumberId}/messages`;
 
-        const response = await fetch(url, {
+        const metaResponse = await fetch(metaUrl, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${accessToken}`,
@@ -51,25 +54,36 @@ export async function POST(request) {
             body: JSON.stringify({
                 messaging_product: "whatsapp",
                 recipient_type: "individual",
-                to: ownerNumber,
+                to: ownerNumber.replace(/[^0-9]/g, ""), // Ensure purely numeric phone format
                 type: "text",
                 text: {
                     preview_url: false,
-                    body: whatsappMessage,
+                    body: messageBody,
                 },
             }),
         });
 
-        const data = await response.json();
+        const metaData = await metaResponse.json();
 
-        if (!response.ok) {
-            console.error("Meta API Error Response:", data);
-            throw new Error(data.error?.message || "Failed to send via Meta API");
+        if (!metaResponse.ok) {
+            console.error("Meta Graph API Error Response:", metaData);
+            return NextResponse.json(
+                {
+                    success: false,
+                    error: metaData.error?.message || "Meta API request failed."
+                },
+                { status: metaResponse.status }
+            );
         }
 
-        return NextResponse.json({ success: true, message: "Enquiry sent directly to owner's WhatsApp!" });
+        return NextResponse.json({
+            success: true,
+            message: "Enquiry sent successfully to WhatsApp!",
+            metaResponse: metaData,
+        });
+
     } catch (error) {
-        console.error("Meta WhatsApp Error:", error);
+        console.error("Server API Route Error:", error);
         return NextResponse.json(
             { success: false, error: error.message || "Internal Server Error" },
             { status: 500 }

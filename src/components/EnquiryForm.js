@@ -41,11 +41,12 @@ export default function EnquiryForm({ onClose }) {
         setStatus({ type: "info", message: "Sending enquiry..." });
 
         try {
-            const response = await fetch("/api/send-whatsapp-meta", {
+            const response = await fetch("/api/send-whatsapp-bg", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
+            console.log(formData);
 
             const data = await response.json();
 
@@ -58,6 +59,8 @@ export default function EnquiryForm({ onClose }) {
                 setTimeout(() => {
                     onClose?.();
                 }, 2500);
+
+                // console.log(INITIAL_FORM_DATA);
             } else {
                 throw new Error(data.error || "Failed to send message");
             }
