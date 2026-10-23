@@ -1,62 +1,103 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Footer() {
+  const [year, setYear] = useState("");
+
+  useEffect(() => {
+    setYear(String(new Date().getFullYear()));
+  }, []);
+
   return (
     <footer className="site-footer">
-      <div className="container py-5">
-        <div className="row g-4">
+      <div className="container">
+        {/* Main Footer */}
+        <div className="row g-4 g-lg-5 py-5">
           {/* Company Information */}
-          <div className="col-md-6">
-            <Link className="footer-brand" href="/">
+          <div className="col-lg-5 col-md-6">
+            <Link href="/" className="footer-brand">
               <span className="footer-brand-mark">S</span>
-              Shree Enterprises
+
+              <span>
+                Shree <span className="footer-brand-highlight">Enterprises</span>
+              </span>
             </Link>
 
-            <p className="mt-3 mb-0 footer-description">
-              Electrical, water purification and maintenance solutions
+            <p className="footer-description mt-4 mb-4">
+              Your trusted partner for electrical solutions, water
+              purification systems, and reliable maintenance services
               for residential and commercial needs.
             </p>
+
+            <div className="footer-trust-note">
+              <i className="bi bi-patch-check-fill me-2" />
+              Quality solutions. Reliable service.
+            </div>
           </div>
 
           {/* Quick Links */}
-          <div className="col-md-3 col-6">
-            <h3>Quick Links</h3>
+          <div className="col-lg-3 col-md-6 col-6">
+            <h3 className="footer-heading">Quick Links</h3>
 
-            <Link href="/about">About Us</Link>
-            <Link href="/services">Services</Link>
-            <Link href="/products">Products</Link>
-            <Link href="/offers">Offers</Link>
-            <Link href="/gallery">Gallery</Link>
-            <Link href="/contact">Contact Us</Link>
+            <ul className="footer-links list-unstyled mb-0">
+              <li><Link href="/about">About Us</Link></li>
+              <li><Link href="/services">Our Services</Link></li>
+              <li><Link href="/products">Products</Link></li>
+              <li><Link href="/offers">Special Offers</Link></li>
+              <li><Link href="/gallery">Gallery</Link></li>
+              <li><Link href="/contact">Contact Us</Link></li>
+            </ul>
           </div>
 
           {/* Contact Information */}
-          <div className="col-md-3 col-6">
-            <h3>Contact</h3>
+          <div className="col-lg-4 col-md-12">
+            <h3 className="footer-heading">Get in Touch</h3>
 
-            <p>
-              <i className="bi bi-geo-alt me-2" />
-              Ambegaon Kh, Pune
-            </p>
+            <div className="footer-contact-item">
+              <span className="footer-contact-icon">
+                <i className="bi bi-geo-alt" />
+              </span>
 
-            <p>
-              <i className="bi bi-telephone me-2" />
-              <a href="tel:8626095720">86260 95720</a>
-            </p>
+              <div>
+                <span className="footer-contact-label">Our Location</span>
+                <p className="mb-0">Ambegaon Kh, Pune, Maharashtra</p>
+              </div>
+            </div>
 
-            <p>
-              <i className="bi bi-telephone me-2" />
-              <a href="tel:8669625720">86696 25720</a>
-            </p>
+            <div className="footer-contact-item">
+              <span className="footer-contact-icon">
+                <i className="bi bi-telephone" />
+              </span>
+
+              <div>
+                <span className="footer-contact-label">Call Us</span>
+                <a href="tel:8626095720">+91 86260 95720</a>
+                <a href="tel:8669625720">+91 86696 25720</a>
+              </div>
+            </div>
+
+            <Link href="/contact" className="footer-contact-cta">
+              Contact Our Team
+              <i className="bi bi-arrow-right ms-2" />
+            </Link>
           </div>
         </div>
 
-        <hr className="footer-divider" />
-
-        <p className="footer-bottom mb-0">
-          &copy; 2026 Shree Enterprises. All rights reserved.
-        </p>
+        
       </div>
+      {/* Footer Bottom */}
+        <div className="footer-bottom-bar">
+          <p className="mb-0">
+            © {year} Shree Enterprises. All rights reserved.
+          </p>
+
+          <a href="#top" className="footer-back-to-top">
+            Back to top
+            <i className="bi bi-arrow-up ms-2" />
+          </a>
+        </div>
     </footer>
   );
 }
