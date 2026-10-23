@@ -1,16 +1,6 @@
-'use client';
-
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
 export default function Footer() {
-
-  const [year , setYear] = useState('...');
-  useEffect(() => {
-    
-    setYear(new Date().getFullYear().toString());
-  }, []);
   return (
     <footer className="site-footer">
       <div className="container py-5">
@@ -64,8 +54,7 @@ export default function Footer() {
         <hr className="footer-divider" />
 
         <p className="footer-bottom mb-0">
-          {year} Shree Enterprises.
-          All rights reserved.
+          &copy; 2026 Shree Enterprises. All rights reserved.
         </p>
       </div>
     </footer>
