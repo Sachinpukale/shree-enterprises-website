@@ -76,7 +76,7 @@ export default function EnquiryForm({ onClose }) {
         <div className="enquiry-form-container">
             <div className="modal-header">
                 <h2>Send an Enquiry</h2>
-                <p>We will respond quickly on WhatsApp</p>
+               
             </div>
 
             <div className="modal-body">
