@@ -12,7 +12,7 @@ export default function Footer() {
 
   return (
     <footer className="site-footer">
-      <div className="container">
+      <div className="page-container">
         {/* Main Footer */}
         <div className="row g-4 g-lg-5 py-5">
           {/* Company Information */}

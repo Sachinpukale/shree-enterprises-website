@@ -1,15 +1,14 @@
-
 /* ========================================
    1. GLOBAL VARIABLES & BASE STYLES
 ======================================== */
 
 :root {
-  --primary-color: #123b63;
-  --primary-dark: #0a2845;
-  --secondary-color: #f5a623;
-  --text-color: #263445;
+  --primary-color: #0a2e52;
+  --primary-dark: #07213d;
+  --secondary-color: #fca311; /* Matched to reference yellow */
+  --text-color: #2b3947;
   --muted-color: #687789;
-  --light-bg: #f5f8fc;
+  --light-bg: #f8f9fa;
 }
 
 * {
@@ -24,7 +23,7 @@ html {
 body {
   margin: 0;
   color: var(--text-color);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 a {
@@ -37,9 +36,34 @@ a {
 }
 
 /* ========================================
+   2. REUSABLE PAGE CONTAINER
+======================================== */
+.page-container {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+@media (min-width: 768px) {
+  .page-container {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .page-container {
+    padding-left: 80px;
+    padding-right: 80px;
+  }
+}
+
+/* ========================================
    2. NAVBAR
 ======================================== */
-
+ 
 .site-navbar {
   position: sticky;
   top: 0;
@@ -48,89 +72,104 @@ a {
   border-bottom: 1px solid #e8edf3;
   box-shadow: 0 4px 18px rgba(10, 40, 69, 0.05);
 }
-
+ 
 .site-brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   margin-right: 20px;
   padding: 0;
   color: var(--primary-color);
-  font-size: 1.2rem;
+  font-size: 22px;
   font-weight: 800;
-  letter-spacing: -0.5px;
+  letter-spacing: 0.1px;
 }
-
+ 
 .site-brand:hover,
 .site-brand:focus {
   color: var(--primary-color);
 }
-
+ 
 .brand-mark {
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   color: #ffffff;
   background: var(--primary-color);
-  border: 2px solid var(--secondary-color);
   border-radius: 12px;
-  font-size: 1.3rem;
+  font-size: 1.6rem;
   font-weight: 800;
 }
-
+ 
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+ 
 .brand-name {
   white-space: nowrap;
 }
-
+ 
 .brand-name > span {
-  color: #b77911;
+  color: var(--secondary-color);
 }
-
+ 
+.brand-tagline {
+  margin-top: 4px;
+  color: #405166;
+  font-size: 0.62rem;
+  font-weight: 700;
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  letter-spacing: 1.2px;
+  white-space: nowrap;
+}
+ 
 .site-navbar .navbar-nav {
   gap: 4px;
 }
-
+ 
 .site-nav-link {
   position: relative;
-  padding: 10px 12px !important;
+  padding: 10px 14px !important;
   color: #405166;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   font-weight: 600;
   transition: color 0.2s ease;
 }
-
+ 
 .site-nav-link:hover,
 .site-nav-link:focus,
 .site-nav-link.active {
   color: var(--primary-color);
 }
-
+ 
 .site-nav-link.active::after {
   position: absolute;
-  right: 12px;
-  bottom: 3px;
-  left: 12px;
+  right: 14px;
+  bottom: 0;
+  left: 14px;
   height: 3px;
   background: var(--secondary-color);
   border-radius: 5px;
   content: "";
 }
-
+ 
 .site-contact-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   margin-left: 6px;
-  padding: 11px 19px;
+  padding: 8px 20px;
   border-radius: 50px;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   font-weight: 700;
   white-space: nowrap;
 }
-
+ 
 .site-navbar-toggler {
   padding: 7px 10px;
   background-color: #ffffff;
@@ -138,18 +177,18 @@ a {
   border-radius: 10px;
   box-shadow: none !important;
 }
-
+ 
 .site-navbar-toggler:focus-visible {
   outline: 3px solid #f5a62380;
   outline-offset: 3px;
 }
-
-.site-navbar .navbar-collapse {
+ 
+/* .site-navbar .navbar-collapse {
   padding-top: 8px;
-}
+} */
 
 /* ========================================
-   3. BUTTONS
+   4. BUTTONS
 ======================================== */
 
 .btn-primary {
@@ -157,10 +196,7 @@ a {
   background: var(--primary-color);
   border-color: var(--primary-color);
 }
-
-.btn-primary:hover,
-.btn-primary:focus {
-  color: #ffffff;
+.btn-primary:hover {
   background: var(--primary-dark);
   border-color: var(--primary-dark);
 }
@@ -169,281 +205,200 @@ a {
   color: #172b40;
   background: var(--secondary-color);
   border-color: var(--secondary-color);
-  font-weight: 600;
+  font-weight: 700;
 }
-
-.btn-warning:hover,
-.btn-warning:focus {
-  color: #172b40;
+.btn-warning:hover {
   background: #e69513;
   border-color: #e69513;
 }
 
 /* ========================================
-   4. HERO SECTION
+   5. HERO SECTION
 ======================================== */
 
 .hero-section {
   position: relative;
-  overflow: hidden;
-  padding: 100px 0;
+  padding: 80px 0 100px;
+  /* Using a realistic construction/engineering image from Unsplash with the exact angled overlay */
+  background-image: 
+    linear-gradient(105deg, rgba(8, 42, 75, 1) 0%, rgba(8, 42, 75, 0.95) 45%, rgba(8, 42, 75, 0.3) 65%, transparent 100%),
+    url('../../public/assets/hero-bg.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: #ffffff;
-  background:
-    radial-gradient(circle at 85% 15%, #24557e 0, transparent 35%),
-    linear-gradient(125deg, #0a2845, #123b63);
+  overflow: hidden;
 }
 
-.hero-badge,
-.section-label,
-.offer-label {
-  display: inline-block;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
+.hero-wave {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+}
+
+.hero-wave svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 700px);
+  height: 80px;
+}
+
+.hero-wave .shape-fill {
+  fill: #ffffff;
 }
 
 .hero-badge {
-  padding: 10px 16px;
-  color: #ffce78;
-  background: #ffffff12;
-  border: 1px solid #ffffff30;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 50px;
-  letter-spacing: 0.4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  gap: 10px;
+}
+
+.hero-badge i {
+  color: var(--secondary-color);
 }
 
 .hero-title {
-  max-width: 700px;
-  font-size: clamp(2.5rem, 5vw, 4.3rem);
+  max-width: 680px;
+  font-size: clamp(2.8rem, 5vw, 4.5rem);
   font-weight: 800;
-  line-height: 1.12;
-  letter-spacing: -2px;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
 }
 
 .hero-title span {
-  color: #ffbd4a;
+  color: var(--secondary-color);
 }
 
 .hero-description {
   max-width: 580px;
   color: #d6e2ee;
-  font-size: 1.08rem;
-  line-height: 1.9;
+  font-size: 1.1rem;
+  line-height: 1.7;
 }
 
 .hero-note {
   color: #d6e2ee;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
 }
 
+/* Right Side Card */
 .hero-visual {
-  padding: 48px 35px;
+  background: #ffffff;
+  color: var(--text-color);
+  padding: 48px 40px;
   text-align: center;
-  background: #ffffff12;
-  border: 1px solid #ffffff35;
-  border-radius: 28px;
-  box-shadow: 0 25px 70px #00000020;
+  border-radius: 30px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 2;
+  margin-top: 20px;
 }
 
 .hero-visual-icon {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 100px;
-  height: 100px;
-  margin: 0 auto 25px;
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 20px;
   color: var(--primary-color);
   background: var(--secondary-color);
-  border-radius: 28px;
+  border-radius: 20px;
   font-size: 3rem;
 }
 
 .visual-eyebrow {
-  color: #ffce78;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 2px;
+  color: var(--primary-color);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
 }
 
 .hero-visual h2 {
-  font-size: 2rem;
-  font-weight: 750;
-  line-height: 1.35;
+  color: var(--primary-color);
+  font-size: 2.1rem;
+  font-weight: 800;
+  line-height: 1.2;
 }
 
 .visual-line {
-  width: 65px;
-  height: 4px;
-  margin: 22px auto;
+  width: 50px;
+  height: 3px;
+  margin: 25px auto;
   background: var(--secondary-color);
   border-radius: 5px;
 }
 
-/* ========================================
-   5. COMMON SECTION STYLES
-======================================== */
-
-.section-padding {
-  padding: 85px 0;
-}
-
-.section-heading {
-  max-width: 650px;
-  margin: 0 auto;
-}
-
-.section-label {
-  color: #b77911;
-}
-
-.section-heading h2,
-.contact-section h2 {
-  margin-top: 12px;
-  color: var(--primary-dark);
-  font-size: clamp(2rem, 4vw, 2.8rem);
-  font-weight: 800;
-}
-
-.section-heading p,
-.contact-section p {
-  color: var(--muted-color);
-  line-height: 1.8;
-}
-
-/* ========================================
-   6. SERVICE CARDS
-======================================== */
-
-.service-card {
-  height: 100%;
-  padding: 30px 24px;
-  background: #ffffff;
-  border: 1px solid #e4eaf1;
-  border-radius: 18px;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.service-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 18px 40px #123b6312;
-}
-
-.service-icon {
+.hero-services-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 58px;
-  height: 58px;
-  margin-bottom: 24px;
-  color: var(--primary-color);
-  background: #eaf1f8;
-  border-radius: 15px;
-  font-size: 1.7rem;
+  gap: 20px;
 }
 
-.service-card h3 {
-  font-size: 1.16rem;
-  font-weight: 750;
-  line-height: 1.5;
-}
-
-.service-card p {
-  min-height: 100px;
-  margin-top: 12px;
-  color: var(--muted-color);
-  font-size: 0.93rem;
-  line-height: 1.8;
-}
-
-.service-link {
-  color: var(--primary-color);
-  font-size: 0.9rem;
-  font-weight: 700;
-}
-
-.service-link:hover {
-  color: #b77911;
-}
-
-/* ========================================
-   7. WHY CHOOSE US / BENEFITS
-======================================== */
-
-.benefits-section {
-  background: var(--light-bg);
-}
-
-.benefit-item {
-  display: flex;
-  gap: 18px;
-  padding: 22px 0;
-  border-bottom: 1px solid #dfe7ef;
-}
-
-.benefit-item:last-child {
-  border-bottom: 0;
-}
-
-.benefit-item > i {
-  flex-shrink: 0;
-  color: #c4881b;
-  font-size: 1.7rem;
-}
-
-.benefit-item h3 {
-  font-size: 1.08rem;
-  font-weight: 750;
-}
-
-.benefit-item p {
-  margin-bottom: 0;
-  color: var(--muted-color);
-  line-height: 1.7;
-}
-
-/* ========================================
-   8. OFFERS SECTION
-======================================== */
-
-.offer-banner {
+.hero-service-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 30px;
-  padding: 42px;
-  background: #edf3f9;
-  border: 1px solid #dce6f0;
-  border-radius: 24px;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary-color);
 }
 
-.offer-label {
-  color: #a56c0e;
+.hero-service-item i {
+  color: var(--secondary-color);
+  font-size: 1.2rem;
 }
 
-.offer-banner h2 {
-  margin-top: 12px;
-  color: var(--primary-dark);
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  font-weight: 800;
-}
-
-.offer-banner p {
-  color: var(--muted-color);
-  line-height: 1.7;
+.hero-service-divider {
+  width: 1px;
+  height: 30px;
+  background: #e4eaf1;
 }
 
 /* ========================================
-   9. CONTACT SECTION
+   6. COMMON SECTION STYLES
 ======================================== */
+.section-padding { padding: 85px 0; }
+.section-heading { max-width: 650px; margin: 0 auto; }
+.section-label { color: #b77911; font-weight: 700; font-size: 0.8rem; letter-spacing: 1px; }
+.section-heading h2, .contact-section h2 { margin-top: 12px; color: var(--primary-dark); font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 800; }
+.section-heading p, .contact-section p { color: var(--muted-color); line-height: 1.8; }
 
-.contact-section {
-  background: #fbfcfe;
-}
+/* SERVICE CARDS, BENEFITS, OFFERS, CONTACT... (Unchanged defaults kept intact) */
+.service-card { height: 100%; padding: 30px 24px; background: #ffffff; border: 1px solid #e4eaf1; border-radius: 18px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.service-card:hover { transform: translateY(-5px); box-shadow: 0 18px 40px #123b6312; }
+.service-icon { display: flex; align-items: center; justify-content: center; width: 58px; height: 58px; margin-bottom: 24px; color: var(--primary-color); background: #eaf1f8; border-radius: 15px; font-size: 1.7rem; }
+.service-card h3 { font-size: 1.16rem; font-weight: 750; line-height: 1.5; }
+.service-card p { min-height: 100px; margin-top: 12px; color: var(--muted-color); font-size: 0.93rem; line-height: 1.8; }
+.service-link { color: var(--primary-color); font-size: 0.9rem; font-weight: 700; }
+.service-link:hover { color: #b77911; }
+.benefits-section { background: var(--light-bg); }
+.benefit-item { display: flex; gap: 18px; padding: 22px 0; border-bottom: 1px solid #dfe7ef; }
+.benefit-item:last-child { border-bottom: 0; }
+.benefit-item > i { flex-shrink: 0; color: #c4881b; font-size: 1.7rem; }
+.benefit-item h3 { font-size: 1.08rem; font-weight: 750; }
+.benefit-item p { margin-bottom: 0; color: var(--muted-color); line-height: 1.7; }
+.offer-banner { display: flex; align-items: center; justify-content: space-between; gap: 30px; padding: 42px; background: #edf3f9; border: 1px solid #dce6f0; border-radius: 24px; }
+.offer-label { color: #a56c0e; }
+.offer-banner h2 { margin-top: 12px; color: var(--primary-dark); font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; }
+.offer-banner p { color: var(--muted-color); line-height: 1.7; }
+.contact-section { background: #fbfcfe; }
 
-.contact-section .btn {
-  font-weight: 600;
-}
+
 
 /* ========================================
    10. FOOTER
@@ -652,42 +607,47 @@ button:focus-visible {
   }
 }
 
+
+
 /* ========================================
-   12. TABLET RESPONSIVENESS
+   7. RESPONSIVENESS
 ======================================== */
 
 @media (max-width: 991.98px) {
   .hero-section {
-    padding: 75px 0;
+    padding: 80px 0 120px;
+    background-image: 
+      linear-gradient(135deg, rgba(8, 42, 75, 1) 0%, rgba(8, 42, 75, 0.9) 70%, rgba(8, 42, 75, 0.7) 100%),
+      url('https://images.unsplash.com/photo-1541888086925-920a0b41c427?q=80&w=2070&auto=format&fit=crop');
   }
-
   .hero-visual {
+    margin: 40px auto 0;
     max-width: 500px;
-    margin: 0 auto;
+  }
+  .hero-services-row {
+    flex-wrap: wrap;
+  }
+  .hero-service-divider {
+    display: none;
+  }
+  .site-navbar .navbar-nav .site-nav-link {
+    display: inline-block;
+    width: fit-content;
   }
 
-  .site-navbar .navbar-nav {
-    align-items: stretch !important;
-    padding-top: 12px;
-  }
-
-  .site-nav-link {
-    padding: 11px 8px !important;
-  }
-
-  .site-nav-link.active::after {
-    right: auto;
-    bottom: 4px;
-    left: 8px;
-    width: 30px;
-  }
-
-  .site-contact-btn {
-    margin: 12px 0 8px;
-  }
-
+  /* 2. Convert the mobile menu into an absolute overlay to stop background shaking */
   .site-navbar .navbar-collapse {
-    padding-top: 8px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #ffffff;
+    padding: 16px 24px 24px;
+    border-bottom: 1px solid #e8edf3;
+    box-shadow: 0 20px 40px rgba(10, 40, 69, 0.12);
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+    z-index: 1030;
   }
 }
 
@@ -717,51 +677,14 @@ button:focus-visible {
 }
 
 @media (max-width: 575.98px) {
-  .site-brand {
-    gap: 8px;
-    font-size: 1.05rem;
-  }
-
-  .site-brand .brand-mark {
-    width: 38px;
-    height: 38px;
-  }
-
-  .hero-section {
-    padding: 60px 0;
-  }
-
-  .hero-title {
-    letter-spacing: -1px;
-  }
-
-  .hero-description {
-    font-size: 1rem;
-    line-height: 1.8;
-  }
-
-  .hero-visual {
-    padding: 35px 20px;
-  }
-
-  .hero-visual h2 {
-    font-size: 1.7rem;
-  }
-
-  .section-padding {
-    padding: 60px 0;
-  }
-
-  .service-card p {
-    min-height: auto;
-  }
-
-  .offer-banner {
-    align-items: flex-start;
-    flex-direction: column;
-    padding: 28px 22px;
-  }
-
+  .hero-section { padding: 60px 0 100px; }
+  .hero-title { letter-spacing: -1px; }
+  .hero-description { font-size: 1rem; line-height: 1.6; }
+  .hero-visual { padding: 35px 20px; }
+  .hero-visual h2 { font-size: 1.7rem; }
+  .hero-visual-icon { width: 70px; height: 70px; font-size: 2rem; }
+  .section-padding { padding: 60px 0; }
+  .offer-banner { align-items: flex-start; flex-direction: column; padding: 28px 22px; }
   .footer-brand {
     font-size: 1.15rem;
   }
@@ -780,4 +703,701 @@ button:focus-visible {
   .footer-contact-item a {
     font-size: 0.87rem;
   }
+}
+
+
+
+/* ==========================================
+   SHREE ENTERPRISES
+   Enquiry Modal — Navy Blue & Golden Yellow
+========================================== */
+
+/* Overlay */
+
+.enquiry-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1050;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+    overflow-y: auto;
+
+    background: rgba(4, 20, 36, 0.68);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+
+    animation: enquiry-overlay-in 0.2s ease;
+}
+
+/* Modal */
+
+.enquiry-modal {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    max-height: calc(100vh - 40px);
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 16px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.25),
+        0 4px 16px rgba(18, 59, 99, 0.08);
+
+    animation: enquiry-modal-in 0.25s ease;
+}
+
+/* Main container */
+
+.enquiry-form-container {
+    width: 100%;
+    padding: 24px 26px 20px;
+    box-sizing: border-box;
+
+    background: #ffffff;
+    color: #123b63;
+
+    font-family: inherit;
+}
+
+/* Header */
+
+.enquiry-form-container .modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+
+    margin: 0 0 22px;
+    padding: 0 0 17px;
+
+    border: none;
+    border-bottom: 1px solid #edf1f5;
+
+    text-align: left;
+}
+
+.enquiry-heading {
+    min-width: 0;
+}
+
+.enquiry-eyebrow {
+    display: block;
+    margin-bottom: 7px;
+
+    color: #d99300;
+
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.enquiry-heading h2 {
+    margin: 0 0 6px;
+
+    color: #123b63;
+
+    font-size: 25px;
+    font-weight: 750;
+    line-height: 1.3;
+}
+
+.enquiry-heading p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* Close button */
+
+.enquiry-form-container .enquiry-close {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+    padding: 0;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 50%;
+
+    background: #f8fafc;
+    color: #123b63;
+
+    font-size: 23px;
+    font-weight: 400;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.enquiry-form-container .enquiry-close:hover {
+    border-color: #123b63;
+    background: #123b63;
+    color: #ffffff;
+}
+
+/* Form layout */
+
+.enquiry-form-container .modal-body {
+    padding: 0;
+}
+
+.enquiry-form-container .field-group {
+    margin-bottom: 15px;
+}
+
+.enquiry-form-container .field-group label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #263e56;
+
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.5;
+}
+
+.enquiry-form-container .required {
+    color: #e5a000;
+    font-weight: 800;
+}
+
+.enquiry-form-container .optional {
+    color: #94a3b8;
+    font-size: 11px;
+    font-weight: 400;
+}
+
+/* Inputs, dropdown and textarea */
+
+.enquiry-form-container .field-group input,
+.enquiry-form-container .field-group select,
+.enquiry-form-container .field-group textarea {
+    display: block;
+
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #dce3eb;
+    border-radius: 7px;
+
+    outline: none;
+
+    background: #f9fafb;
+    color: #173b60;
+
+    font-family: inherit;
+    font-size: 12px;
+    line-height: 1.5;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.enquiry-form-container .field-group select {
+    cursor: pointer;
+}
+
+.enquiry-form-container .field-group textarea {
+    min-height: 78px;
+    resize: vertical;
+}
+
+.enquiry-form-container .field-group input::placeholder,
+.enquiry-form-container .field-group textarea::placeholder {
+    color: #94a3b8;
+    opacity: 1;
+}
+
+/* Focus state */
+
+.enquiry-form-container .field-group input:focus,
+.enquiry-form-container .field-group select:focus,
+.enquiry-form-container .field-group textarea:focus {
+    border-color: #e9a900;
+
+    background: #ffffff;
+
+    box-shadow: 0 0 0 3px rgba(255, 184, 28, 0.14);
+}
+
+/* Submit button */
+
+.enquiry-form-container .submit-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    width: 100%;
+    min-height: 46px;
+    margin-top: 5px;
+    padding: 12px 18px;
+
+    border: 1px solid #ffb81c;
+    border-radius: 8px;
+
+    background: #ffb81c;
+    color: #123b63;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 750;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.enquiry-form-container .submit-button:hover:not(:disabled) {
+    border-color: #123b63;
+    background: #123b63;
+    color: #ffffff;
+
+    box-shadow: 0 5px 14px rgba(18, 59, 99, 0.17);
+}
+
+.enquiry-form-container .submit-button:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+.enquiry-form-container .submit-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.enquiry-form-container .submit-arrow {
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1;
+}
+
+/* Submission status */
+
+.enquiry-form-container .status-message {
+    margin-top: 13px;
+    padding: 11px 12px;
+
+    border-radius: 7px;
+
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.enquiry-form-container .status-message.success {
+    background: #edf8f0;
+    color: #237442;
+}
+
+.enquiry-form-container .status-message.error {
+    background: #fff1f0;
+    color: #b42318;
+}
+
+.enquiry-form-container .status-message.info {
+    background: #eef5fc;
+    color: #123b63;
+}
+
+/* Footer note */
+
+.enquiry-footer-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    margin-top: 17px;
+
+    color: #7b8795;
+
+    font-size: 10px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.enquiry-footer-dot {
+    flex-shrink: 0;
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+    background: #e5a000;
+}
+
+/* Keyboard focus */
+
+.enquiry-form-container .enquiry-close:focus-visible,
+.enquiry-form-container .submit-button:focus-visible {
+    outline: 3px solid rgba(255, 184, 28, 0.55);
+    outline-offset: 3px;
+}
+
+/* Animations */
+
+@keyframes enquiry-overlay-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes enquiry-modal-in {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Tablet and mobile */
+
+@media (max-width: 480px) {
+    .enquiry-modal-overlay {
+        padding: 12px;
+    }
+
+    .enquiry-modal {
+        max-height: calc(100dvh - 24px);
+        border-radius: 14px;
+    }
+
+    .enquiry-form-container {
+        padding: 20px 18px 18px;
+    }
+
+    .enquiry-form-container .modal-header {
+        margin-bottom: 18px;
+        padding-bottom: 14px;
+    }
+
+    .enquiry-heading h2 {
+        font-size: 22px;
+    }
+
+    .enquiry-heading p {
+        font-size: 11px;
+    }
+
+    .enquiry-form-container .field-group {
+        margin-bottom: 13px;
+    }
+}
+
+/* Reduced motion accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+    .enquiry-modal-overlay,
+    .enquiry-modal {
+        animation: none;
+    }
+
+    .enquiry-form-container *,
+    .enquiry-form-container *::before,
+    .enquiry-form-container *::after {
+        transition: none !important;
+    }
+}
+
+/* ==========================================
+   FIELD VALIDATION
+========================================== */
+
+.enquiry-form-container .field-group input.input-error {
+    border-color: #dc3545;
+    background: #fffafa;
+}
+
+.enquiry-form-container .field-group input.input-error:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.12);
+}
+
+.enquiry-form-container .field-group select[aria-invalid="true"] {
+    border-color: #dc3545;
+}
+
+.enquiry-form-container .field-error {
+    margin: 5px 0 0;
+    color: #dc3545;
+    font-size: 11px;
+    line-height: 1.45;
+    font-weight: 500;
+}
+
+
+/* ========================================
+   14. WEBSITE ANIMATIONS & KEYFRAMES
+======================================== */
+
+/* Fade In Up Entrance */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade In Left Entrance */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Fade In Right Entrance */
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Gentle Floating Animation for Hero Card */
+@keyframes floatCard {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Pulse Glow for Icons / Badges */
+@keyframes softPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(252, 163, 17, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(252, 163, 17, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(252, 163, 17, 0);
+  }
+}
+
+/* Animation Utility Classes */
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in-left {
+  animation: fadeInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in-right {
+  animation: fadeInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-float {
+  animation: floatCard 4s ease-in-out infinite;
+}
+
+/* Enhanced Interactive Hover Effects */
+.service-card {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.service-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 45px rgba(10, 46, 82, 0.12);
+}
+
+.service-card:hover .service-icon {
+  background: var(--secondary-color);
+  color: #ffffff;
+  transform: scale(1.05) rotate(3deg);
+  transition: all 0.3s ease;
+}
+
+.service-icon {
+  transition: all 0.3s ease;
+}
+
+.btn {
+  transition: all 0.25s ease-in-out;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+/* ========================================
+   14. ULTRA-SMOOTH SCROLL REVEAL ANIMATIONS
+======================================== */
+
+.reveal-on-scroll,
+.reveal-left,
+.reveal-right {
+  opacity: 0;
+  will-change: opacity, transform;
+  transition: opacity 1.1s cubic-bezier(0.16, 1, 0.3, 1), transform 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+  backface-visibility: hidden;
+}
+
+/* Subtle, graceful starting positions */
+.reveal-on-scroll {
+  transform: translateY(25px);
+}
+
+.reveal-left {
+  transform: translateX(-30px);
+}
+
+.reveal-right {
+  transform: translateX(30px);
+}
+
+/* Final visible state */
+.reveal-on-scroll.is-visible,
+.reveal-left.is-visible,
+.reveal-right.is-visible {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+/* Gentle Floating Animation for Hero Card */
+@keyframes floatCard {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float {
+  animation: floatCard 4s ease-in-out infinite;
+}
+
+/* Enhanced Interactive Hover Effects */
+.service-card {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.service-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 45px rgba(10, 46, 82, 0.12);
+}
+
+.service-card:hover .service-icon {
+  background: var(--secondary-color);
+  color: #ffffff;
+  transform: scale(1.05) rotate(3deg);
+  transition: all 0.4s ease;
+}
+
+.service-icon {
+  transition: all 0.4s ease;
+}
+
+/* ========================================
+   TRUST STRIP (shared by home + services)
+   Paste into globals.css, e.g. after the "COMMON SECTION STYLES" block.
+======================================== */
+
+.trust-strip {
+  padding: 24px 0 0;
+}
+
+.trust-strip-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  overflow: hidden;
+  background: #e4eaf1;
+  border: 1px solid #e4eaf1;
+  border-radius: 20px;
+  box-shadow: 0 12px 32px rgba(10, 46, 82, 0.07);
+}
+
+.trust-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 22px 24px;
+  background: #ffffff;
+}
+
+.trust-item > i {
+  margin-top: 2px;
+  color: #c4881b;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.trust-item strong {
+  display: block;
+  color: var(--primary-dark);
+  font-size: 0.98rem;
+  font-weight: 750;
+}
+
+.trust-item span {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted-color);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 991.98px) {
+  .trust-strip-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 575.98px) {
+  .trust-strip-grid { grid-template-columns: 1fr; }
 }
