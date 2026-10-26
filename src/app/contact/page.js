@@ -126,7 +126,7 @@ export default function ContactPage() {
                   </p>
                 </div>
 
-                <EnquiryForm />
+                <EnquiryForm showHeader={false} />
               </div>
             </div>
           </div>

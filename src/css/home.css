@@ -54,7 +54,7 @@
   border-radius: 16px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-a.hm-contact-card:hover {
+.hm-contact-card:hover {
   border-color: var(--secondary-color);
   box-shadow: 0 10px 26px rgba(10, 46, 82, 0.08);
 }

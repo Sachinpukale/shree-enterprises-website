@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import EnquiryForm from "@/components/EnquiryForm";
+import EnquiryModal from "@/components/Enquirymodal";
 
 const categories = [
   { id: "all", label: "All Products" },
@@ -245,64 +245,11 @@ export default function ProductsPage() {
         </div>
       </section>
 
-      {/* Modal Popup Wrapper Layout */}
-      {isFormOpen && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1050,
-          }}
-          onClick={() => setIsFormOpen(false)}
-        >
-          <div
-            style={{
-              position: "relative",
-              backgroundColor: "white",
-              borderRadius: "12px",
-              width: "90%",
-              maxWidth: "500px",
-              boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              onClick={() => setIsFormOpen(false)}
-              style={{
-                position: "absolute",
-                top: "15px",
-                right: "20px",
-                background: "none",
-                border: "none",
-                fontSize: "1.75rem",
-                cursor: "pointer",
-                color: "#aaa",
-                zIndex: 1051,
-                lineHeight: 1,
-              }}
-              aria-label="Close"
-            >
-              &times;
-            </button>
-
-            <div style={{ marginTop: "-1rem" }}>
-              <EnquiryForm
-                isOpen={isFormOpen}
-                onClose={() => setIsFormOpen(false)}
-                defaultService={`Product Enquiry: ${selectedProduct}`}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      <EnquiryModal
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
+        defaultService={selectedProduct ? `Product Enquiry: ${selectedProduct}` : ""}
+      />
     </main>
   );
 }

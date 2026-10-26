@@ -284,8 +284,11 @@ export default function Home() {
                     >
                       {inner}
                     </a>
+
                   ) : (
-                    <div className="hm-contact-card">{inner}</div>
+                    <div className="hm-contact-card-hover">
+                      <div className="hm-contact-card">{inner}</div>
+                    </div>
                   )}
                 </div>
               );

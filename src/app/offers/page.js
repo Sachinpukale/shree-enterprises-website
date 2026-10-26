@@ -1,7 +1,7 @@
   "use client";
 
   import { useEffect, useMemo, useState } from "react";
-  import EnquiryForm from "@/components/EnquiryForm";
+  import EnquiryModal from "@/components/Enquirymodal";
 
   const WHATSAPP_NUMBER = "918626095720";
   const PHONE_NUMBER = "8626095720";
@@ -193,21 +193,6 @@
     };
 
     const closeForm = () => setIsFormOpen(false);
-
-    // Close modal with Escape key and lock page scroll while it is open
-    useEffect(() => {
-      if (!isFormOpen) return undefined;
-      const onKeyDown = (e) => {
-        if (e.key === "Escape") setIsFormOpen(false);
-      };
-      const previousOverflow = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      document.addEventListener("keydown", onKeyDown);
-      return () => {
-        document.body.style.overflow = previousOverflow;
-        document.removeEventListener("keydown", onKeyDown);
-      };
-    }, [isFormOpen]);
 
     return (
       <main>
@@ -435,69 +420,11 @@
         </section>
 
         {/* Modal Popup Wrapper Layout */}
-        {isFormOpen && (
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label="Offer enquiry form"
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              width: "100vw",
-              height: "100vh",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              zIndex: 1050,
-              padding: "1rem",
-            }}
-            onClick={closeForm}
-          >
-            <div
-              style={{
-                position: "relative",
-                backgroundColor: "white",
-                borderRadius: "12px",
-                width: "100%",
-                maxWidth: "500px",
-                maxHeight: "92vh",
-                overflowY: "auto",
-                boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                type="button"
-                onClick={closeForm}
-                style={{
-                  position: "absolute",
-                  top: "15px",
-                  right: "20px",
-                  background: "none",
-                  border: "none",
-                  fontSize: "1.75rem",
-                  cursor: "pointer",
-                  color: "#aaa",
-                  zIndex: 1051,
-                  lineHeight: 1,
-                }}
-                aria-label="Close"
-              >
-                &times;
-              </button>
-
-              <div style={{ marginTop: "-1rem" }}>
-                <EnquiryForm
-                  isOpen={isFormOpen}
-                  onClose={closeForm}
-                  defaultService={`Offer Enquiry: ${selectedOffer}`}
-                />
-              </div>
-            </div>
-          </div>
-        )}
+        <EnquiryModal
+          isOpen={isFormOpen}
+          onClose={closeForm}
+          defaultService={selectedOffer ? `Offer Enquiry: ${selectedOffer}` : ""}
+        />
       </main>
     );
   }
