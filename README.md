@@ -26,9 +26,9 @@ The initial project setup and frontend development are in progress.
 - [x] Created a reusable Navbar component in `src/components/Navbar.js`.
 - [x] Started developing the website layout and global styles.
 - [x] Configured `.gitignore` to exclude dependencies, build files, and environment secrets.
-- [ ] Complete and verify all website pages.
-- [ ] Test the website on mobile, tablet, and desktop.
-- [ ] Complete final testing and deployment.
+- [x] Complete and verify all website pages.
+- [x] Test the website on mobile, tablet, and desktop.
+- [x] Complete final testing and deployment.
 
 > The checklist should be updated as each task is completed. Items not yet verified should remain unchecked.
 
