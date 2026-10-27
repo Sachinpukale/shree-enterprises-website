@@ -1,430 +1,468 @@
-  "use client";
+"use client";
 
-  import { useEffect, useMemo, useState } from "react";
-  import EnquiryModal from "@/components/Enquirymodal";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import EnquiryModal from "@/components/Enquirymodal";
+import HeroWave from "@/components/Herowave";
+import TrustStrip from "@/components/Truststrip";
+import useScrollReveal from "@/hooks/Usescrollreveal";
+import { site } from "@/data/Site";
+import "@/css/services.css";
 
-  const WHATSAPP_NUMBER = "918626095720";
-  const PHONE_NUMBER = "8626095720";
+const highlights = [
+  { icon: "bi-patch-check-fill", title: "100% Genuine Parts", text: "Original spares with manufacturer warranty" },
+  { icon: "bi-shield-check", title: "Certified Engineers", text: "Trained, experienced professionals on every job" },
+  { icon: "bi-receipt-cutoff", title: "Upfront Transparent Pricing", text: "No hidden charges or unexpected bills" },
+  { icon: "bi-headset", title: "Prompt Support", text: "Quick response & priority booking across Pune" },
+];
 
-  const categories = [
-    { key: "all", label: "All Offers", icon: "bi-grid-fill" },
-    { key: "water", label: "Water Purifier", icon: "bi-droplet-fill" },
-    { key: "electrical", label: "Electrical", icon: "bi-lightning-charge-fill" },
-    { key: "society", label: "Societies", icon: "bi-buildings-fill" },
-    { key: "commercial", label: "Business", icon: "bi-shop" },
-  ];
+const categories = [
+  { key: "all", label: "All Offers", icon: "bi-grid-fill" },
+  { key: "water", label: "Water Purifier", icon: "bi-droplet-fill" },
+  { key: "electrical", label: "Electrical", icon: "bi-lightning-charge-fill" },
+  { key: "society", label: "Societies & AMC", icon: "bi-buildings-fill" },
+  { key: "commercial", label: "Commercial", icon: "bi-shop" },
+];
 
-  // NOTE: discount figures below are display content. Confirm them with the business before going live.
-  const promotionalOffers = [
-    {
-      id: "ro-amc",
-      category: "water",
-      tag: "MOST POPULAR",
-      tagColor: "bg-warning text-dark",
-      title: "Complete RO Purifier Annual AMC Plan",
-      savings: "Save up to 30%",
-      validity: "Valid for Pune Residents",
-      description:
-        "Keep your family drinking clean, bacteria-free water all year round without worrying about sudden repair bills or filter replacement charges.",
-      inclusions: [
-        "3 Scheduled periodic service visits per year",
-        "Free 1 complete set of Sediment & Activated Carbon filter cartridges",
-        "Periodic TDS, pH & water hardness checks",
-        "Unlimited emergency breakdown calls with zero inspection fee",
-        "10% discount on major spare parts (RO Membrane, Booster Pump)",
-      ],
-      idealFor: "All domestic water purifier brands",
-    },
-    {
-      id: "electrical-audit",
-      category: "electrical",
-      tag: "SAFETY FIRST",
-      tagColor: "bg-danger text-white",
-      title: "Home Electrical Safety & Earthing Audit",
-      savings: "Special Festive Package",
-      validity: "Limited Time Offer",
-      description:
-        "Avoid electrical fires and unexpected short-circuits. Have an expert engineer test your entire home's wiring, earthing resistance, and load distribution.",
-      inclusions: [
-        "Comprehensive digital earthing pit resistance measurement",
-        "Main Distribution Board (DB) & MCB load balancing check",
-        "Inspection of heavy-load lines (AC, Refrigerator, Microwave, Geysers)",
-        "Identification of loose wiring, voltage drops & thermal hotspots",
-        "Detailed written safety report with recommended fixes",
-      ],
-      idealFor: "Independent homes, apartments & older buildings",
-    },
-    {
-      id: "society-combo",
-      category: "society",
-      tag: "BEST VALUE FOR SOCIETIES",
-      tagColor: "bg-primary text-white",
-      title: "Housing Society Facility Care Combo",
-      savings: "Save 25% on Joint AMC",
-      validity: "Ambegaon Kh & Surrounding Pune",
-      description:
-        "Why manage separate contractors? Combine society elevator servicing, water pump room automation, and common area lighting into one hassle-free package.",
-      inclusions: [
-        "Monthly elevator safety, lubrication, and ARD battery maintenance",
-        "Water pump automation & overhead water tank level sensor upkeep",
-        "Staircase, parking & compound light maintenance",
-        "Single point of contact for society management committees",
-        "Priority 24/7 emergency response for lift breakdowns",
-      ],
-      idealFor: "Cooperative Housing Societies & Apartment Complexes",
-    },
-    {
-      id: "commercial-setup",
-      category: "commercial",
-      tag: "BUSINESS SOLUTION",
-      tagColor: "bg-dark text-white",
-      title: "New Office / Shop Turnkey Setup",
-      savings: "Flat 15% Off Total Estimate",
-      validity: "Valid on combined contracts",
-      description:
-        "Moving into a new commercial space? Get complete electrical wiring, architectural LED illumination, and commercial drinking water installation in one bundle.",
-      inclusions: [
-        "Complete electrical conduit piping & modular workstations wiring",
-        "High-capacity commercial RO plant installation",
-        "Submeter & DB panel installation with surge arrestors",
-        "Free post-setup inspection & 6-month service guarantee",
-      ],
-      idealFor: "Retail stores, offices, clinics & cafes",
-    },
-    {
-      id: "pump-automation",
-      category: "society",
-      tag: "SMART UPGRADE",
-      tagColor: "bg-success text-white",
-      title: "Water Pump & Tank Automation Package",
-      savings: "Free Site Inspection",
-      validity: "Valid for Pune Societies & Bungalows",
-      description:
-        "Stop overflowing tanks and dry-running pumps. Automate your pump room with level sensors and protection controllers to save water and electricity.",
-      inclusions: [
-        "Overhead & underground tank level sensor installation",
-        "Automatic pump controller with dry-run protection",
-        "Starter panel check and motor load testing",
-        "Cable and earthing inspection of the pump room",
-        "30-day free support after installation",
-      ],
-      idealFor: "Societies, bungalows, row houses & small complexes",
-    },
-    {
-      id: "led-lighting",
-      category: "commercial",
-      tag: "ENERGY SAVER",
-      tagColor: "bg-info text-dark",
-      title: "LED Lighting Upgrade for Shops & Offices",
-      savings: "Cut Power Bills with LED",
-      validity: "Limited Time Offer",
-      description:
-        "Replace old tube lights and bulbs with efficient LED lighting. Brighter spaces, lower electricity bills, and a cleaner professional look for your business.",
-      inclusions: [
-        "Free lighting assessment and layout suggestion",
-        "Supply and fitting of LED panels, downlights & strip lights",
-        "Neat concealed wiring and switchboard adjustments",
-        "Old fitting removal and site cleanup",
-        "Installation warranty on workmanship",
-      ],
-      idealFor: "Shops, showrooms, offices, clinics & godowns",
-    },
-  ];
+const claimSteps = [
+  {
+    icon: "bi-hand-index-thumb-fill",
+    title: "Choose Your Package",
+    text: "Select the promotional deal that suits your home, society, or business.",
+  },
+  {
+    icon: "bi-pencil-square",
+    title: "Submit Enquiry",
+    text: "Fill our quick enquiry form or message us directly on WhatsApp.",
+  },
+  {
+    icon: "bi-telephone-inbound-fill",
+    title: "Site Inspection",
+    text: "Our engineer confirms your booking and schedules a convenient site visit.",
+  },
+  {
+    icon: "bi-patch-check-fill",
+    title: "Offer Applied",
+    text: "Work is executed to perfection with promotional discount applied.",
+  },
+];
 
-  const claimSteps = [
-    {
-      icon: "bi-hand-index-thumb-fill",
-      title: "Choose Your Offer",
-      text: "Pick the package that suits your home, society or business.",
-    },
-    {
-      icon: "bi-pencil-square",
-      title: "Send an Enquiry",
-      text: "Fill the short form or message us on WhatsApp with your details.",
-    },
-    {
-      icon: "bi-telephone-inbound-fill",
-      title: "We Call You Back",
-      text: "Our team confirms the offer and fixes a convenient site visit.",
-    },
-    {
-      icon: "bi-patch-check-fill",
-      title: "Enjoy the Service",
-      text: "A trained engineer completes the work and the offer is applied.",
-    },
-  ];
+const faqs = [
+  {
+    q: "How do I claim a promotional offer?",
+    a: "Click 'Claim Offer' on any package, submit your contact details, and our team will get in touch immediately to confirm your discount and schedule a site visit.",
+  },
+  {
+    q: "Can I combine two promotional packages?",
+    a: "Yes! Especially for housing societies and commercial setups. Simply mention the offers you need and we will bundle them for maximum savings.",
+  },
+  {
+    q: "Are these offers valid across all of Pune?",
+    a: "Yes, our engineers cover all residential, commercial, and industrial areas across Pune and Pimpri-Chinchwad.",
+  },
+  {
+    q: "Is there any inspection fee for site visits?",
+    a: "Our promotional packages include free or heavily discounted initial site audits. All charges are confirmed transparently before starting any work.",
+  },
+];
 
-  const faqs = [
-    {
-      q: "How do I claim an offer?",
-      a: "Click 'Claim This Offer', submit the enquiry form, and our team will contact you to confirm eligibility and schedule a visit. You can also message us on WhatsApp.",
-    },
-    {
-      q: "Can I combine two offers?",
-      a: "In many cases yes, especially for society and commercial bundles. Mention the offers you are interested in and we will share a combined estimate.",
-    },
-    {
-      q: "Are the offers valid outside Pune?",
-      a: "Most offers apply to Pune and nearby areas. The validity shown on each card tells you the exact service area. Contact us if you are unsure.",
-    },
-    {
-      q: "Is there a charge for the site visit or inspection?",
-      a: "Inspection and estimate details are mentioned inside each package. We always confirm any applicable charges before starting work.",
-    },
-  ];
+const detectCategory = (title = "", desc = "") => {
+  const text = `${title} ${desc}`.toLowerCase();
+  if (text.includes("water") || text.includes("ro") || text.includes("purifier") || text.includes("filter") || text.includes("membrane")) {
+    return "water";
+  }
+  if (text.includes("electric") || text.includes("wiring") || text.includes("earthing") || text.includes("light") || text.includes("mcb")) {
+    return "electrical";
+  }
+  if (text.includes("society") || text.includes("elevator") || text.includes("lift") || text.includes("pump") || text.includes("tank")) {
+    return "society";
+  }
+  if (text.includes("commercial") || text.includes("office") || text.includes("shop") || text.includes("business") || text.includes("industry")) {
+    return "commercial";
+  }
+  return "all";
+};
 
-  export default function OffersPage() {
-    const [isFormOpen, setIsFormOpen] = useState(false);
-    const [selectedOffer, setSelectedOffer] = useState("");
-    const [activeCategory, setActiveCategory] = useState("all");
-    const [openFaq, setOpenFaq] = useState(0);
+export default function OffersPage() {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState("");
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [openFaq, setOpenFaq] = useState(0);
+  const [liveOffers, setLiveOffers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-    const visibleOffers = useMemo(
-      () =>
-        activeCategory === "all"
-          ? promotionalOffers
-          : promotionalOffers.filter((o) => o.category === activeCategory),
-      [activeCategory]
-    );
+  useScrollReveal([liveOffers]);
 
-    const handleClaim = (offerTitle) => {
-      setSelectedOffer(offerTitle);
-      setIsFormOpen(true);
+  // Fetch live promotional offers from the CMS Backend
+  useEffect(() => {
+    const fetchCmsOffers = async () => {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_CMS_API_URL || "http://localhost:5000/api/v1";
+        const res = await fetch(`${apiUrl}/offers`);
+        const json = await res.json();
+
+        if (json?.success && Array.isArray(json.data)) {
+          const formatted = json.data.map((o) => ({
+            id: o.id,
+            category: detectCategory(o.title, o.description),
+            tag: o.status === "Active" ? "PROMO DEAL" : o.status,
+            title: o.title,
+            validity: o.validTill ? `Valid till: ${o.validTill}` : "Limited Period",
+            description: o.description,
+            image: o.image,
+          }));
+          setLiveOffers(formatted);
+        }
+      } catch (err) {
+        console.error("Failed to fetch live CMS offers:", err);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    const closeForm = () => setIsFormOpen(false);
+    fetchCmsOffers();
+  }, []);
 
-    return (
-      <main>
-        {/* Hero Section */}
-        <section className="hero-section text-center py-5">
-          <div className="container py-4">
-            <span className="hero-badge mb-3">
-              <i className="bi bi-tag-fill me-2" />
-              SPECIAL PACKAGES & DEALS
-            </span>
-            <h1 className="hero-title mx-auto mt-3">
-              Premium Services at <span>Unmatched Value</span>
-            </h1>
-            <p className="hero-description mx-auto mt-3">
-              Explore our curated maintenance packages and seasonal service discounts designed to
-              protect your equipment while saving you money.
+  // Smooth scroll when hash is present or changes
+  useEffect(() => {
+    if (isLoading || liveOffers.length === 0) return;
+
+    const handleHashScroll = () => {
+      const hash = window.location.hash.replace("#", "").toLowerCase().trim();
+      if (!hash) return;
+
+      let targetEl = document.getElementById(hash);
+      if (!targetEl && hash.startsWith("offer-")) {
+        const rawId = hash.replace("offer-", "");
+        const matched = liveOffers.find((o) => o.id.toLowerCase() === rawId);
+        if (matched) {
+          targetEl = document.getElementById(`offer-${matched.id}`);
+        }
+      }
+
+      if (targetEl) {
+        setTimeout(() => {
+          const yOffset = -90; // offset for sticky navbar
+          const y = targetEl.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }, 150);
+      }
+    };
+
+    handleHashScroll();
+    window.addEventListener("hashchange", handleHashScroll);
+    return () => window.removeEventListener("hashchange", handleHashScroll);
+  }, [isLoading, liveOffers]);
+
+  const visibleOffers = useMemo(() => {
+    if (activeCategory === "all") return liveOffers;
+    return liveOffers.filter((o) => o.category === activeCategory || o.category === "all");
+  }, [activeCategory, liveOffers]);
+
+  const handleClaim = (offerTitle) => {
+    setSelectedOffer(offerTitle);
+    setIsFormOpen(true);
+  };
+
+  const closeForm = () => setIsFormOpen(false);
+
+  return (
+    <main>
+      {/* ── Refined Hero Section Matching Services & Site Design ── */}
+      <section className="hero-section sv-hero">
+        <div className="page-container">
+          <nav aria-label="Breadcrumb" className="sv-breadcrumb">
+            <Link href="/">Home</Link>
+            <i className="bi bi-chevron-right" aria-hidden="true" />
+            <span aria-current="page">Special Offers</span>
+          </nav>
+
+          <span className="hero-badge">
+            <i className="bi bi-tag-fill me-2" aria-hidden="true" />
+            Promotional Deals & AMC Packages
+          </span>
+
+          <h1 className="hero-title mt-4">
+            Special offers & curated <span>service packages.</span>
+          </h1>
+          <p className="hero-description mt-3">
+            Save on water purifier AMC, electrical safety audits, building maintenance and turnkey commercial solutions with upfront transparent pricing across Pune.
+          </p>
+
+          <div className="d-flex flex-wrap gap-3 mt-4">
+            <a
+              href="#current-offers"
+              className="btn btn-warning btn-lg rounded-pill px-4 shadow-sm"
+            >
+              Browse Active Deals <i className="bi bi-arrow-down ms-2" aria-hidden="true" />
+            </a>
+            <a
+              href={site.phoneHref}
+              className="btn btn-outline-light btn-lg rounded-pill px-4"
+              style={{ borderColor: "rgba(255,255,255,0.5)" }}
+            >
+              <i className="bi bi-telephone me-2" aria-hidden="true" />
+              Call {site.phoneDisplay}
+            </a>
+          </div>
+
+          {/* Jump to menu */}
+          {liveOffers.length > 0 && (
+            <div className="sv-jump" role="navigation" aria-label="Jump to active offer">
+              <span className="sv-jump-label">Jump to</span>
+              {liveOffers.map((o) => (
+                <a key={o.id} href={`#offer-${o.id}`} className="sv-jump-chip">
+                  <i className="bi bi-tag-fill" aria-hidden="true" />{" "}
+                  {o.title.split(" ").slice(0, 3).join(" ")}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+        <HeroWave />
+      </section>
+
+      {/* Trust Standards Strip */}
+      <TrustStrip items={highlights} label="Our promotional standards" />
+
+      {/* ── Compact, Clean Offers Grid ── */}
+      <section className="section-padding bg-light" id="current-offers">
+        <div className="page-container">
+          <div className="section-heading text-center mb-5 reveal-on-scroll">
+            <span className="section-label">EXCLUSIVE SAVINGS</span>
+            <h2>Active Promotional Packages</h2>
+            <p>
+              Hand-picked maintenance packages and inspection audits for homes, housing societies, and businesses in Pune.
             </p>
           </div>
-        </section>
 
-        {/* Offers List */}
-        <section className="section-padding bg-light" id="current-offers">
-          <div className="container">
-            <div className="section-heading text-center mb-4">
-              <span className="section-label">CURRENT PROMOTIONS</span>
-              <h2>Exclusive Packages for Pune</h2>
-              <p>
-                Take advantage of our limited-time maintenance bundles for homes, societies, and
-                commercial spaces.
-              </p>
-            </div>
-
-            {/* Category filter */}
-            <div
-              className="d-flex justify-content-center gap-2 flex-wrap mb-5"
-              role="group"
-              aria-label="Filter offers by category"
-            >
-              {categories.map((cat) => {
-                const isActive = activeCategory === cat.key;
-                return (
-                  <button
-                    key={cat.key}
-                    type="button"
-                    aria-pressed={isActive}
-                    className={`btn btn-sm rounded-pill px-3 fw-semibold ${
-                      isActive ? "btn-primary" : "btn-outline-secondary bg-white"
-                    }`}
-                    onClick={() => setActiveCategory(cat.key)}
-                  >
-                    <i className={`bi ${cat.icon} me-1`} />
-                    {cat.label}
-                  </button>
-                );
-              })}
-            </div>
-
-            <p className="text-center text-secondary small mb-4" aria-live="polite">
-              Showing {visibleOffers.length} {visibleOffers.length === 1 ? "offer" : "offers"}
-            </p>
-
-            {visibleOffers.length === 0 ? (
-              <div className="text-center py-5">
-                <i className="bi bi-emoji-neutral fs-1 text-secondary" />
-                <p className="text-secondary mt-2">No offers in this category right now.</p>
+          {/* Category Filter Chips */}
+          <div
+            className="d-flex justify-content-center gap-2 flex-wrap mb-5"
+            role="group"
+            aria-label="Filter offers by category"
+          >
+            {categories.map((cat) => {
+              const isActive = activeCategory === cat.key;
+              return (
                 <button
+                  key={cat.key}
                   type="button"
-                  className="btn btn-warning rounded-pill px-4 fw-semibold"
-                  onClick={() => setActiveCategory("all")}
+                  aria-pressed={isActive}
+                  className={`btn btn-sm rounded-pill px-3 py-2 fw-semibold ${
+                    isActive ? "btn-primary shadow-sm" : "btn-outline-secondary bg-white"
+                  }`}
+                  onClick={() => setActiveCategory(cat.key)}
                 >
-                  View All Offers
+                  <i className={`bi ${cat.icon} me-1.5`} />
+                  {cat.label}
                 </button>
+              );
+            })}
+          </div>
+
+          {/* Loading Indicator */}
+          {isLoading && (
+            <div className="text-center py-5">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading live offers...</span>
               </div>
-            ) : (
-              <div className="row g-4">
-                {visibleOffers.map((offer) => (
-                  <div className="col-lg-6" key={offer.id}>
-                    <div className="card h-100 border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white d-flex flex-column justify-content-between">
-                      <div>
-                        <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-                          <span className={`badge px-3 py-2 rounded-pill fw-semibold ${offer.tagColor}`}>
-                            {offer.tag}
-                          </span>
-                          <span className="badge bg-light text-secondary border px-3 py-1 rounded-pill small">
-                            {offer.validity}
-                          </span>
+              <p className="text-secondary mt-2 small">Loading active promotional packages...</p>
+            </div>
+          )}
+
+          {/* Empty State */}
+          {!isLoading && visibleOffers.length === 0 && (
+            <div className="text-center py-5">
+              <i className="bi bi-tag text-secondary fs-1" />
+              <p className="text-secondary mt-2">No promotional packages found under this category.</p>
+              <button
+                type="button"
+                className="btn btn-warning rounded-pill px-4 py-2 fw-semibold mt-2"
+                onClick={() => setActiveCategory("all")}
+              >
+                View All Deals
+              </button>
+            </div>
+          )}
+
+          {/* Sleek, Reliable 3-Column Grid */}
+          {!isLoading && visibleOffers.length > 0 && (
+            <div className="row g-4">
+              {visibleOffers.map((offer) => (
+                <div className="col-12 col-md-6 col-lg-4" key={offer.id} id={`offer-${offer.id}`}>
+                  <article className="offer-card reveal-on-scroll">
+                    {/* Media Header */}
+                    {offer.image ? (
+                      <div className="offer-card-media">
+                        <div
+                          className="offer-media-backdrop"
+                          style={{ backgroundImage: `url(${offer.image})` }}
+                        />
+                        <img
+                          src={offer.image}
+                          alt={offer.title}
+                          className="offer-media-img"
+                          loading="lazy"
+                        />
+                        <span className="offer-card-badge">{offer.tag}</span>
+                      </div>
+                    ) : (
+                      <div className="offer-card-no-img-head">
+                        <div className="service-icon">
+                          <i className="bi bi-tag-fill" aria-hidden="true" />
                         </div>
+                        <span className="badge bg-warning text-dark px-3 py-1.5 rounded-pill fw-bold small">
+                          {offer.tag}
+                        </span>
+                      </div>
+                    )}
 
-                        <h3 className="h4 fw-bold text-dark mt-2 mb-1">{offer.title}</h3>
-                        <div className="fw-bold fs-5 mb-3" style={{ color: "#a56c0e" }}>{offer.savings}</div>
-
-                        <p className="text-secondary mb-4" style={{ lineHeight: "1.7" }}>
-                          {offer.description}
-                        </p>
-
-                        <h4 className="h6 fw-bold text-dark mb-3">What&apos;s Included:</h4>
-                        <ul className="list-unstyled mb-4">
-                          {offer.inclusions.map((item) => (
-                            <li key={item} className="d-flex align-items-start mb-2 text-secondary small">
-                              <i className="bi bi-check-circle-fill text-success me-2 mt-1 flex-shrink-0" />
-                              <span>{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-
-                        <div className="p-2 bg-light rounded text-muted small mb-4">
-                          <strong>Best For:</strong> {offer.idealFor}
-                        </div>
+                    {/* Card Body */}
+                    <div className="offer-card-body">
+                      <div className="offer-card-validity">
+                        <i className="bi bi-clock-history" aria-hidden="true" />
+                        <span>{offer.validity}</span>
                       </div>
 
-                      <div className="pt-3 border-top d-flex gap-2 flex-wrap">
+                      <h3 className="offer-card-title">{offer.title}</h3>
+                      <p className="offer-card-desc">{offer.description}</p>
+
+                      <div className="offer-card-guarantee">
+                        <i className="bi bi-shield-check text-success" aria-hidden="true" />
+                        <span>Genuine Parts & Certified Workmanship</span>
+                      </div>
+
+                      {/* Card Actions */}
+                      <div className="offer-card-actions">
                         <button
                           type="button"
-                          className="btn btn-warning rounded-pill px-4 fw-semibold"
+                          className="btn btn-warning rounded-pill px-3 py-2 fw-bold flex-grow-1"
                           onClick={() => handleClaim(offer.title)}
                         >
-                          Claim This Offer <i className="bi bi-arrow-right ms-1" />
+                          Claim Offer
                         </button>
                         <a
-                          href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                            `Hello Shree Enterprises, I would like to claim the offer: ${offer.title}`
+                          href={`https://wa.me/918626095720?text=${encodeURIComponent(
+                            `Hello Shree Enterprises, I would like to claim the promotional offer: ${offer.title}`
                           )}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="btn btn-outline-success rounded-pill px-3"
+                          className="btn btn-outline-success rounded-pill px-3 py-2 d-inline-flex align-items-center"
+                          aria-label={`Enquire about ${offer.title} on WhatsApp`}
                         >
-                          <i className="bi bi-whatsapp me-1" /> Enquire on WhatsApp
+                          <i className="bi bi-whatsapp" aria-hidden="true" />
                         </a>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* How to claim */}
-        <section className="section-padding">
-          <div className="container">
-            <div className="section-heading text-center mb-5">
-              <span className="section-label">SIMPLE PROCESS</span>
-              <h2>How to Claim Your Offer</h2>
-              <p>Four easy steps from enquiry to a completed service.</p>
-            </div>
-            <div className="row g-4">
-              {claimSteps.map((step, idx) => (
-                <div className="col-sm-6 col-lg-3" key={step.title}>
-                  <div className="card h-100 border-0 shadow-sm rounded-4 p-4 text-center bg-white">
-                    <div className="mb-3">
-                      <i className={`bi ${step.icon} fs-1`} style={{ color: "#c4881b" }} />
-                    </div>
-                    <div className="small fw-bold text-secondary mb-1">STEP {idx + 1}</div>
-                    <h3 className="h6 fw-bold text-dark">{step.title}</h3>
-                    <p className="text-secondary small mb-0">{step.text}</p>
-                  </div>
+                  </article>
                 </div>
               ))}
             </div>
-          </div>
-        </section>
+          )}
+        </div>
+      </section>
 
-        {/* Custom Society or Business Requirement */}
-        <section className="section-padding pt-0">
-          <div className="container">
-            <div className="offer-banner">
-              <div>
-                <span className="offer-label">CUSTOM PACKAGES</span>
-                <h2>Need a Custom Maintenance Package?</h2>
-                <p className="mb-0">
-                  Are you a society chairman, office administrator, or factory owner? We formulate
-                  tailor-made AMC contracts matching your exact equipment and budget.
-                </p>
-              </div>
-              <div className="d-flex gap-2 flex-wrap">
-                <button
-                  type="button"
-                  className="btn btn-warning rounded-pill px-4 fw-semibold"
-                  onClick={() => handleClaim("Custom Society / Office Package")}
-                >
-                  Request Custom Quote
-                </button>
-                <a
-                  href={`tel:${PHONE_NUMBER}`}
-                  className="btn btn-outline-primary rounded-pill px-4 fw-semibold"
-                >
-                  <i className="bi bi-telephone me-1" /> Call Us
-                </a>
-              </div>
+      {/* ── Process Steps ── */}
+      <section className="section-padding">
+        <div className="page-container">
+          <div className="section-heading text-center mb-5 reveal-on-scroll">
+            <span className="section-label">SIMPLE PROCESS</span>
+            <h2>How to Claim Your Offer</h2>
+            <p>Four easy steps from online enquiry to a completed, warrantied service.</p>
+          </div>
+          <ol className="sv-steps">
+            {claimSteps.map((step, idx) => (
+              <li className="sv-step reveal-on-scroll" key={step.title}>
+                <div className="sv-step-icon">
+                  <span className="sv-step-num">{idx + 1}</span>
+                  <i className={`bi ${step.icon}`} aria-hidden="true" />
+                </div>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* ── Custom AMC Banner ── */}
+      <section className="section-padding pt-0">
+        <div className="page-container">
+          <div className="offer-banner reveal-on-scroll">
+            <div>
+              <span className="offer-label">CUSTOM PACKAGES</span>
+              <h2>Need a Custom Maintenance Package?</h2>
+              <p className="mb-0">
+                Are you a society chairman, office administrator, or plant manager? We formulate
+                tailor-made AMC contracts matching your exact equipment and budget.
+              </p>
+            </div>
+            <div className="d-flex gap-2 flex-wrap">
+              <button
+                type="button"
+                className="btn btn-warning rounded-pill px-4 py-2 fw-semibold"
+                onClick={() => handleClaim("Custom Society / Office Package")}
+              >
+                Request Custom Quote
+              </button>
+              <a
+                href={site.phoneHref}
+                className="btn btn-outline-primary rounded-pill px-4 py-2 fw-semibold"
+              >
+                <i className="bi bi-telephone me-1" /> Call Us
+              </a>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* FAQ */}
-        <section className="section-padding bg-light">
-          <div className="container" style={{ maxWidth: "820px" }}>
-            <div className="section-heading text-center mb-5">
-              <span className="section-label">GOOD TO KNOW</span>
-              <h2>Offer FAQs</h2>
-            </div>
-            <div className="d-flex flex-column gap-3">
-              {faqs.map((item, idx) => {
-                const isOpen = openFaq === idx;
-                return (
-                  <div className="card border-0 shadow-sm rounded-4 bg-white" key={item.q}>
-                    <button
-                      type="button"
-                      className="btn text-start d-flex justify-content-between align-items-center fw-semibold text-dark p-3 px-4 border-0"
-                      aria-expanded={isOpen}
-                      onClick={() => setOpenFaq(isOpen ? -1 : idx)}
-                    >
-                      <span>{item.q}</span>
-                      <i className={`bi ${isOpen ? "bi-dash-lg" : "bi-plus-lg"} ms-3`} style={{ color: "#a56c0e" }} />
-                    </button>
-                    {isOpen && <div className="px-4 pb-3 text-secondary small">{item.a}</div>}
+      {/* ── FAQ Section ── */}
+      <section className="section-padding bg-light">
+        <div className="page-container sv-faq-wrap">
+          <div className="section-heading text-center mb-5 reveal-on-scroll">
+            <span className="section-label">GOOD TO KNOW</span>
+            <h2>Frequently Asked Questions</h2>
+            <p>Common questions about claiming promotional packages and site visits.</p>
+          </div>
+          <div className="sv-faq">
+            {faqs.map((item, idx) => {
+              const isOpen = openFaq === idx;
+              return (
+                <div
+                  className={`sv-faq-item ${isOpen ? "is-open" : ""}`}
+                  key={item.q}
+                >
+                  <button
+                    type="button"
+                    className="sv-faq-q"
+                    aria-expanded={isOpen}
+                    onClick={() => setOpenFaq(isOpen ? -1 : idx)}
+                  >
+                    <span>{item.q}</span>
+                    <i className="bi bi-plus-lg" aria-hidden="true" />
+                  </button>
+                  <div className="sv-faq-a">
+                    <div>
+                      <p>{item.a}</p>
+                    </div>
                   </div>
-                );
-              })}
-            </div>
-            <p className="text-center text-muted small mt-4 mb-0">
-              Offers are subject to availability, site inspection and our standard terms. Final
-              pricing is confirmed after enquiry.
-            </p>
+                </div>
+              );
+            })}
           </div>
-        </section>
+          <p className="text-center text-muted small mt-4 mb-0">
+            Promotional offers are subject to equipment condition and site inspection in Pune. Final quotation confirmed upfront.
+          </p>
+        </div>
+      </section>
 
-        {/* Modal Popup Wrapper Layout */}
-        <EnquiryModal
-          isOpen={isFormOpen}
-          onClose={closeForm}
-          defaultService={selectedOffer ? `Offer Enquiry: ${selectedOffer}` : ""}
-        />
-      </main>
-    );
-  }
+      {/* Modal Popup */}
+      <EnquiryModal
+        isOpen={isFormOpen}
+        onClose={closeForm}
+        defaultService={selectedOffer ? `Offer Enquiry: ${selectedOffer}` : ""}
+      />
+    </main>
+  );
+}

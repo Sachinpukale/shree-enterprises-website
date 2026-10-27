@@ -4,12 +4,15 @@ import { useEffect } from "react";
 
 // Adds "is-visible" to .reveal-on-scroll / .reveal-left / .reveal-right
 // elements once they enter the viewport (styles live in globals.css).
-export default function useScrollReveal() {
+// Supports dynamically loaded content (e.g. CMS services & offers) via MutationObserver.
+export default function useScrollReveal(deps = []) {
   useEffect(() => {
-    const els = document.querySelectorAll(".reveal-on-scroll, .reveal-left, .reveal-right");
+    if (typeof window === "undefined") return;
+
+    const selector = ".reveal-on-scroll, .reveal-left, .reveal-right";
 
     if (!("IntersectionObserver" in window)) {
-      els.forEach((el) => el.classList.add("is-visible"));
+      document.querySelectorAll(selector).forEach((el) => el.classList.add("is-visible"));
       return;
     }
 
@@ -22,10 +25,34 @@ export default function useScrollReveal() {
           }
         });
       },
-      { threshold: 0.05, rootMargin: "0px 0px -50px 0px" }
+      { threshold: 0.05, rootMargin: "0px 0px -40px 0px" }
     );
 
-    els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
+    const observeElements = () => {
+      document.querySelectorAll(`${selector}:not(.is-visible)`).forEach((el) => {
+        observer.observe(el);
+      });
+    };
+
+    // Observe any existing elements on mount / state change
+    observeElements();
+
+    // Use MutationObserver so any dynamically inserted elements (e.g. API responses)
+    // are automatically detected and observed immediately.
+    const mutationObserver = new MutationObserver(() => {
+      observeElements();
+    });
+
+    if (document.body) {
+      mutationObserver.observe(document.body, {
+        childList: true,
+        subtree: true,
+      });
+    }
+
+    return () => {
+      mutationObserver.disconnect();
+      observer.disconnect();
+    };
+  }, deps);
 }

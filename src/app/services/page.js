@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import EnquiryModal from "@/components/Enquirymodal";
 import HeroWave from "@/components/Herowave";
@@ -8,81 +8,6 @@ import TrustStrip from "@/components/Truststrip";
 import useScrollReveal from "@/hooks/Usescrollreveal";
 import { site } from "@/data/Site";
 import "@/css/services.css";
-
-const serviceCategories = [
-  {
-    id: "electrical",
-    icon: "bi-lightning-charge-fill",
-    badge: "Most requested",
-    title: "Electrical Wiring & Power Solutions",
-    short: "Electrical",
-    tagline: "Safe, compliant and durable electrical work for homes and commercial setups.",
-    description:
-      "Whether you are constructing a new property, renovating an office, or fixing recurring electrical tripping, our certified electricians deliver precise installations and prompt fault troubleshooting.",
-    features: [
-      "Complete home & commercial rewiring and conduit piping",
-      "Distribution Board (DB) setup with MCB & RCCB shock protection",
-      "Architectural lighting, LED panels and designer switches",
-      "Dedicated heavy-load circuits for ACs, geysers and appliances",
-      "Earthing pit installation and electrical safety audits",
-      "Short-circuit diagnostics and emergency fuse replacements",
-    ],
-  },
-  {
-    id: "water",
-    icon: "bi-droplet-fill",
-    badge: "Health & purity",
-    title: "Water Purification & RO Plants",
-    short: "Water & RO",
-    tagline: "Clean, mineral-rich drinking water for families and workplaces.",
-    description:
-      "End-to-end water treatment, from kitchen RO systems to high-capacity commercial plants, delivering clear water with an optimal TDS balance.",
-    features: [
-      "Domestic RO, UV and UF purifier installation & relocation",
-      "Commercial RO plants (25, 50, 100+ LPH) for offices & cafes",
-      "Filter cartridge replacement (Sediment, Pre-Carbon, Mineralizer)",
-      "RO membrane replacement & booster pump repair",
-      "Water TDS testing and hardness reduction treatment",
-      "Annual Maintenance Contracts (AMC) with free visits",
-    ],
-  },
-  {
-    id: "commercial",
-    icon: "bi-building-gear",
-    badge: "Facility support",
-    title: "Residential & Commercial Maintenance",
-    short: "Maintenance",
-    tagline: "Turnkey property maintenance that keeps your premises running smoothly.",
-    description:
-      "Skip coordinating with several contractors. Shree Enterprises handles routine electrical, plumbing and facility care for housing societies, retail stores and commercial buildings.",
-    features: [
-      "Housing society maintenance contracts & scheduled inspections",
-      "Office electrical fitting, data cabling conduit and lighting upkeep",
-      "Pump room automation, water level controllers & starter panels",
-      "Plumbing leak detection, valve replacement and drain clearing",
-      "Preventive maintenance to avoid costly downtime",
-      "On-call technician support across Pune",
-    ],
-  },
-  {
-    id: "elevator",
-    icon: "bi-arrow-up-square-fill",
-    badge: "Certified safety",
-    title: "Elevator Maintenance & Safety Inspections",
-    short: "Elevators",
-    tagline: "Smooth, quiet and safe vertical transport with no compromises.",
-    description:
-      "We partner with building committees and property managers for regular elevator servicing, safety audits and rapid breakdown response.",
-    features: [
-      "Monthly lift servicing, lubrication & mechanical adjustments",
-      "Automatic Rescue Device (ARD) and emergency battery checks",
-      "Door sensor alignment, motor drive checks and cable wear audits",
-      "Cabin touch-ups, push button & indicator repairs",
-      "Compliance safety audits as per elevator norms",
-      "24/7 emergency breakdown and passenger rescue support",
-    ],
-  },
-];
 
 const highlights = [
   { icon: "bi-patch-check-fill", title: "Certified technicians", text: "Trained, experienced professionals on every job" },
@@ -109,7 +34,118 @@ export default function ServicesPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedService, setSelectedService] = useState("");
   const [openFaq, setOpenFaq] = useState(0);
-  useScrollReveal();
+  const [liveServices, setLiveServices] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  useScrollReveal([liveServices]);
+
+  // Fetch live services from CMS Backend
+  useEffect(() => {
+    const fetchCmsServices = async () => {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_CMS_API_URL || "http://localhost:5000/api/v1";
+        const res = await fetch(`${apiUrl}/services`);
+        const json = await res.json();
+
+        if (json?.success && Array.isArray(json.data)) {
+          const formatted = json.data.map((s, idx) => ({
+            id: s.id,
+            icon: s.image ? "bi-check-circle" : "bi-gear-wide-connected",
+            badge: s.status === "Active" ? "Active Service" : s.status,
+            title: s.title,
+            short: s.title.split(" ")[0] || `Service ${idx + 1}`,
+            tagline: s.title,
+            description: s.description,
+            image: s.image,
+            features: [
+              "Complete turnkey installation and commissioning",
+              "Genuine industrial materials & certified tools",
+              "Tested for safety, durability & operational efficiency",
+              "On-demand emergency breakdown & scheduled AMC support",
+            ],
+          }));
+          setLiveServices(formatted);
+        }
+      } catch (err) {
+        console.error("Failed to load live CMS services:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCmsServices();
+  }, []);
+
+  // Smooth scroll to service when hash is present or changes
+  useEffect(() => {
+    if (isLoading || liveServices.length === 0) return;
+
+    const handleHashScroll = () => {
+      const hash = window.location.hash.replace("#", "").toLowerCase().trim();
+      if (!hash) return;
+
+      // 1. Direct ID match
+      let targetEl = document.getElementById(hash);
+
+      // 2. Keyword / alias match if direct ID not found
+      if (!targetEl) {
+        const matched = liveServices.find((s) => {
+          const title = s.title.toLowerCase();
+          const sid = s.id.toLowerCase();
+          if (sid === hash) return true;
+          if (
+            hash === "electrical" &&
+            (title.includes("electric") ||
+              title.includes("wiring") ||
+              title.includes("earthing") ||
+              title.includes("switchgear"))
+          )
+            return true;
+          if (
+            hash === "water" &&
+            (title.includes("water") ||
+              title.includes("ro ") ||
+              title.includes("purifier") ||
+              title.includes("filter") ||
+              title.includes("pump"))
+          )
+            return true;
+          if (
+            hash === "commercial" &&
+            (title.includes("commercial") ||
+              title.includes("turnkey") ||
+              title.includes("maintenance") ||
+              title.includes("support") ||
+              title.includes("office"))
+          )
+            return true;
+          if (
+            hash === "elevator" &&
+            (title.includes("elevator") ||
+              title.includes("lift") ||
+              title.includes("ard"))
+          )
+            return true;
+          return title.includes(hash);
+        });
+
+        if (matched) {
+          targetEl = document.getElementById(matched.id);
+        }
+      }
+
+      if (targetEl) {
+        setTimeout(() => {
+          const yOffset = -90; // offset for sticky navbar
+          const y = targetEl.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }, 150);
+      }
+    };
+
+    handleHashScroll();
+    window.addEventListener("hashchange", handleHashScroll);
+    return () => window.removeEventListener("hashchange", handleHashScroll);
+  }, [isLoading, liveServices]);
 
   const openForm = (serviceName) => {
     setSelectedService(serviceName || "");
@@ -118,7 +154,7 @@ export default function ServicesPage() {
 
   return (
     <main>
-      {/* Hero (reuses the home hero styles) */}
+      {/* Hero */}
       <section className="hero-section sv-hero">
         <div className="page-container">
           <nav aria-label="Breadcrumb" className="sv-breadcrumb">
@@ -158,80 +194,117 @@ export default function ServicesPage() {
             </a>
           </div>
 
-          <div className="sv-jump" role="navigation" aria-label="Jump to a service">
-            <span className="sv-jump-label">Jump to</span>
-            {serviceCategories.map((s) => (
-              <a key={s.id} href={`#${s.id}`} className="sv-jump-chip">
-                <i className={`bi ${s.icon}`} aria-hidden="true" /> {s.short}
-              </a>
-            ))}
-          </div>
+          {/* Jump to menu */}
+          {liveServices.length > 0 && (
+            <div className="sv-jump" role="navigation" aria-label="Jump to a service">
+              <span className="sv-jump-label">Jump to</span>
+              {liveServices.map((s) => (
+                <a key={s.id} href={`#${s.id}`} className="sv-jump-chip">
+                  <i className={`bi ${s.icon}`} aria-hidden="true" /> {s.short}
+                </a>
+              ))}
+            </div>
+          )}
         </div>
         <HeroWave />
       </section>
 
       <TrustStrip items={highlights} label="Our service standards" />
 
-      {/* Services */}
+      {/* Services List */}
       <section className="section-padding">
         <div className="page-container">
           <div className="section-heading text-center mb-5 reveal-on-scroll">
             <span className="section-label">SPECIALIZED SERVICES</span>
             <h2>What We Offer</h2>
-            <p>Four service areas for homeowners, businesses and housing societies.</p>
+            <p>Reliable service solutions for homeowners, businesses and housing societies.</p>
           </div>
 
-          <div className="sv-list">
-            {serviceCategories.map((service, idx) => (
-              <article
-                id={service.id}
-                key={service.id}
-                className={`sv-row reveal-on-scroll ${idx % 2 ? "sv-row--flip" : ""}`}
-              >
-                <div className="sv-row-main">
-                  <div className="sv-row-head">
-                    <div className="service-icon">
-                      <i className={`bi ${service.icon}`} aria-hidden="true" />
+          {/* Loading Spinner */}
+          {isLoading && (
+            <div className="text-center py-5">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading services...</span>
+              </div>
+              <p className="text-secondary mt-2 small">Loading live services...</p>
+            </div>
+          )}
+
+          {!isLoading && liveServices.length === 0 && (
+            <div className="text-center py-5">
+              <p className="text-secondary">No services currently listed.</p>
+            </div>
+          )}
+
+          {!isLoading && liveServices.length > 0 && (
+            <div className="sv-list">
+              {liveServices.map((service, idx) => (
+                <article
+                  id={service.id}
+                  key={service.id}
+                  className={`sv-row reveal-on-scroll ${idx % 2 ? "sv-row--flip" : ""}`}
+                >
+                  <div className="sv-row-main">
+                    <div className="sv-row-head">
+                      <div className="service-icon">
+                        <i className={`bi ${service.icon}`} aria-hidden="true" />
+                      </div>
+                      <span className="sv-badge">{service.badge}</span>
                     </div>
-                    <span className="sv-badge">{service.badge}</span>
-                  </div>
-                  <h3>{service.title}</h3>
-                  <p className="sv-tagline">{service.tagline}</p>
-                  <p className="sv-desc">{service.description}</p>
 
-                  <div className="d-flex flex-wrap gap-2 mt-4">
-                    <button
-                      type="button"
-                      className="btn btn-primary rounded-pill px-4"
-                      onClick={() => openForm(service.title)}
-                    >
-                      Enquire Now
-                    </button>
-                    <a
-                      href={site.whatsappHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-outline-success rounded-pill px-3"
-                    >
-                      <i className="bi bi-whatsapp me-1" aria-hidden="true" /> WhatsApp
-                    </a>
-                  </div>
-                </div>
+                    {service.image && (
+                      <div className="sv-media-frame mb-3">
+                        <div
+                          className="sv-media-backdrop"
+                          style={{ backgroundImage: `url(${service.image})` }}
+                        />
+                        <img
+                          src={service.image}
+                          alt={service.title}
+                          className="sv-media-img"
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
 
-                <div className="sv-row-side">
-                  <h4>What&apos;s included</h4>
-                  <ul>
-                    {service.features.map((item) => (
-                      <li key={item}>
-                        <i className="bi bi-check-circle-fill" aria-hidden="true" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </article>
-            ))}
-          </div>
+                    <h3>{service.title}</h3>
+                    <p className="sv-tagline">{service.tagline}</p>
+                    <p className="sv-desc">{service.description}</p>
+
+                    <div className="d-flex flex-wrap gap-2 mt-4">
+                      <button
+                        type="button"
+                        className="btn btn-primary rounded-pill px-4"
+                        onClick={() => openForm(service.title)}
+                      >
+                        Enquire Now
+                      </button>
+                      <a
+                        href={site.whatsappHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-outline-success rounded-pill px-3"
+                      >
+                        <i className="bi bi-whatsapp me-1" aria-hidden="true" /> WhatsApp
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="sv-row-side">
+                    <h4>What&apos;s included</h4>
+                    <ul>
+                      {service.features.map((item) => (
+                        <li key={item}>
+                          <i className="bi bi-check-circle-fill" aria-hidden="true" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -260,33 +333,27 @@ export default function ServicesPage() {
       </section>
 
       {/* FAQ */}
-      <section className="section-padding">
-        <div className="page-container sv-faq-wrap">
-          <div className="section-heading text-center mb-4 reveal-on-scroll">
-            <span className="section-label">FAQ</span>
-            <h2>Common Questions</h2>
+      <section className="section-padding bg-light">
+        <div className="page-container" style={{ maxWidth: "820px" }}>
+          <div className="section-heading text-center mb-5 reveal-on-scroll">
+            <span className="section-label">FREQUENTLY ASKED</span>
+            <h2>Services FAQs</h2>
           </div>
-
-          <div className="sv-faq reveal-on-scroll">
-            {faqs.map((f, i) => {
-              const open = openFaq === i;
+          <div className="d-flex flex-column gap-3">
+            {faqs.map((item, idx) => {
+              const isOpen = openFaq === idx;
               return (
-                <div className={`sv-faq-item ${open ? "is-open" : ""}`} key={f.q}>
+                <div className="card border-0 shadow-sm rounded-4 bg-white" key={item.q}>
                   <button
                     type="button"
-                    className="sv-faq-q"
-                    aria-expanded={open}
-                    aria-controls={`faq-panel-${i}`}
-                    onClick={() => setOpenFaq(open ? -1 : i)}
+                    className="btn text-start d-flex justify-content-between align-items-center fw-semibold text-dark p-3 px-4 border-0"
+                    aria-expanded={isOpen}
+                    onClick={() => setOpenFaq(isOpen ? -1 : idx)}
                   >
-                    <span>{f.q}</span>
-                    <i className="bi bi-plus-lg" aria-hidden="true" />
+                    <span>{item.q}</span>
+                    <i className={`bi ${isOpen ? "bi-dash-lg" : "bi-plus-lg"} ms-3`} style={{ color: "#a56c0e" }} />
                   </button>
-                  <div id={`faq-panel-${i}`} className="sv-faq-a" role="region" aria-label={f.q}>
-                    <div>
-                      <p>{f.a}</p>
-                    </div>
-                  </div>
+                  {isOpen && <div className="px-4 pb-3 text-secondary small">{item.a}</div>}
                 </div>
               );
             })}
@@ -294,33 +361,7 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* CTA (reuses the home offer banner) */}
-      <section className="section-padding" style={{ paddingTop: 0 }}>
-        <div className="page-container">
-          <div className="offer-banner reveal-on-scroll">
-            <div>
-              <span className="offer-label">GET STARTED TODAY</span>
-              <h2>Have a specific requirement?</h2>
-              <p className="mb-0">
-                Quick phone consultation, accurate pricing and on-site support across Pune.
-              </p>
-            </div>
-            <div className="d-flex flex-wrap gap-3">
-              <button
-                type="button"
-                className="btn btn-warning rounded-pill px-4 shadow-sm"
-                onClick={() => openForm("Custom Service Request")}
-              >
-                Book an Appointment
-              </button>
-              <Link href="/contact" className="btn btn-outline-primary rounded-pill px-4">
-                Contact Us
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      {/* Modal Popup */}
       <EnquiryModal
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
