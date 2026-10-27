@@ -34,14 +34,12 @@ function validateName(value) {
         return "Name cannot exceed 100 characters.";
     }
 
-    // Allow Unicode letters, spaces, apostrophes, hyphens and initials.
     const namePattern = /^[\p{L}][\p{L}\s.'-]{1,99}$/u;
 
     if (!namePattern.test(name)) {
         return "Enter a valid name using letters only.";
     }
 
-    // A name must contain at least two letters.
     const letters = name.match(/\p{L}/gu) || [];
 
     if (letters.length < 2) {
@@ -59,14 +57,12 @@ function validatePhone(value) {
         return "Please enter your mobile number.";
     }
 
-    // Allow digits, spaces, hyphens, parentheses and an optional +91 prefix.
     if (!/^\+?[\d\s()-]+$/.test(phone)) {
         return "Enter a valid mobile number using digits only.";
     }
 
     let digits = phone.replace(/[\s()-]/g, "");
 
-    // Remove the optional Indian country code.
     if (digits.startsWith("+91")) {
         digits = digits.slice(3);
     }
@@ -75,7 +71,6 @@ function validatePhone(value) {
         return "Mobile number must contain 10 digits.";
     }
 
-    // Indian mobile numbers start with 6, 7, 8 or 9.
     if (!/^[6-9]\d{9}$/.test(digits)) {
         return "Enter a valid Indian mobile number.";
     }
@@ -83,7 +78,6 @@ function validatePhone(value) {
     return "";
 }
 
-// Return a normalized 10-digit Indian mobile number.
 function normalizePhone(value) {
     let digits = value.trim().replace(/[\s()-]/g, "");
 
@@ -116,7 +110,6 @@ export default function EnquiryForm({
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Synchronize selected service when defaultService changes dynamically
     useEffect(() => {
         if (defaultService) {
             setFormData((prev) => ({
@@ -138,7 +131,6 @@ export default function EnquiryForm({
             [name]: value,
         }));
 
-        // Clear existing errors as soon as valid; do not introduce errors while typing
         if (errors[name]) {
             let error = "";
             if (name === "name") {
@@ -191,18 +183,12 @@ export default function EnquiryForm({
         const newErrors = {
             name: validateName(formData.name),
             phone: validatePhone(formData.phone),
-            service: formData.service
-                ? ""
-                : "Please select a service.",
+            service: formData.service ? "" : "Please select a service.",
         };
 
         setErrors(newErrors);
 
-        if (
-            newErrors.name ||
-            newErrors.phone ||
-            newErrors.service
-        ) {
+        if (newErrors.name || newErrors.phone || newErrors.service) {
             setStatus({
                 type: "",
                 message: "",
@@ -442,7 +428,7 @@ export default function EnquiryForm({
                         <textarea
                             id="enquiry-message"
                             name="message"
-                            rows={3}
+                            rows={2}
                             maxLength={2000}
                             value={formData.message}
                             onChange={handleChange}

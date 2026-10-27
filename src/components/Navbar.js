@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 const navLinks = [
@@ -41,7 +42,13 @@ export default function Navbar() {
         {/* Company Brand wrapped in a dedicated div */}
         <div className="navbar-brand-wrapper">
           <Link className="navbar-brand site-brand" href="/">
-            <span className="brand-mark">S</span>
+            <Image
+              src="/assets/se-Photoroom.png"
+              alt="Shree Enterprises Logo"
+              width={65}
+              height={60}
+              className="brand-logo"
+            />
 
             <span className="brand-text">
               <span className="brand-name">

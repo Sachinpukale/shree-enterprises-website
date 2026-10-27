@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export default function Footer() {
@@ -18,7 +19,13 @@ export default function Footer() {
           {/* Company Information */}
           <div className="col-lg-5 col-md-6">
             <Link href="/" className="footer-brand">
-              <span className="footer-brand-mark">S</span>
+              <Image
+                            src="/assets/se-Photoroom.png"
+                            alt="Shree Enterprises Logo"
+                            width={70}
+                            height={70}
+                            className="brand-logo-footer"
+                          />
 
               <span>
                 Shree <span className="footer-brand-highlight">Enterprises</span>
