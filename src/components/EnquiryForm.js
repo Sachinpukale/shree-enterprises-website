@@ -199,35 +199,37 @@ export default function EnquiryForm({
         setIsSubmitting(true);
         setStatus({
             type: "info",
-            message: "Sending your enquiry...",
+            message: "Preparing your WhatsApp enquiry...",
         });
 
         try {
-            const payload = {
-                ...formData,
-                name: formData.name.trim().replace(/\s+/g, " "),
-                phone: normalizePhone(formData.phone),
-            };
+            const cleanName = formData.name.trim().replace(/\s+/g, " ");
+            const cleanPhone = normalizePhone(formData.phone);
+            const targetPhone = process.env.NEXT_PUBLIC_OWNER_WHATSAPP_NUMBER || "918626095720";
 
-            const response = await fetch("/api/send-whatsapp-bg", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
-            });
+            const messageLines = [
+                "🔔 *New Website Enquiry — Shree Enterprises*",
+                "",
+                `👤 *Name:* ${cleanName}`,
+                `📞 *Phone:* ${cleanPhone}`,
+                `🔧 *Service:* ${formData.service.trim()}`,
+                formData.preferredTime ? `⏰ *Preferred Time:* ${formData.preferredTime.trim()}` : "",
+                formData.message ? `💬 *Message:* ${formData.message.trim()}` : "",
+                "",
+                "Sent via Shree Enterprises Website"
+            ].filter(Boolean);
 
-            const data = await response.json();
+            const whatsappUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(messageLines.join("\n"))}`;
 
-            if (!response.ok || !data.success) {
-                throw new Error(
-                    data.error || "Failed to send your enquiry."
-                );
+            // Open WhatsApp directly (100% Free, no Meta API token needed)
+            if (typeof window !== "undefined") {
+                window.open(whatsappUrl, "_blank");
             }
 
             setStatus({
                 type: "success",
-                message: "Your enquiry has been sent successfully!",
+                message: "Opening WhatsApp... Please tap 'Send' to complete your enquiry!",
+                link: whatsappUrl,
             });
 
             setFormData({
@@ -240,15 +242,13 @@ export default function EnquiryForm({
                 if (onClose) {
                     onClose();
                 } else {
-                    setStatus({ type: "", message: "" });
+                    setStatus({ type: "", message: "", link: "" });
                 }
-            }, 2500);
+            }, 3500);
         } catch (error) {
             setStatus({
                 type: "error",
-                message:
-                    error.message ||
-                    "Something went wrong. Please try again.",
+                message: "Could not open WhatsApp. Please call us directly.",
             });
         } finally {
             setIsSubmitting(false);
@@ -442,9 +442,7 @@ export default function EnquiryForm({
                         disabled={isSubmitting}
                     >
                         <span>
-                            {isSubmitting
-                                ? "Sending Enquiry..."
-                                : "Send Enquiry"}
+                            {isSubmitting ? "Opening WhatsApp..." : "Send Enquiry on WhatsApp"}
                         </span>
 
                         {!isSubmitting && (
@@ -463,7 +461,29 @@ export default function EnquiryForm({
                             role="status"
                             aria-live="polite"
                         >
-                            {status.message}
+                            <div>{status.message}</div>
+                            {status.link && (
+                                <a
+                                    href={status.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                        gap: "6px",
+                                        marginTop: "8px",
+                                        padding: "6px 14px",
+                                        backgroundColor: "#25D366",
+                                        color: "#ffffff",
+                                        borderRadius: "20px",
+                                        fontWeight: "600",
+                                        fontSize: "0.85rem",
+                                        textDecoration: "none",
+                                    }}
+                                >
+                                    <i className="bi bi-whatsapp" /> Tap here if WhatsApp didn't open
+                                </a>
+                            )}
                         </div>
                     )}
                 </form>
