@@ -42,7 +42,7 @@ export default function ServicesPage() {
   useEffect(() => {
     const fetchCmsServices = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_CMS_API_URL || "http://localhost:5000/api/v1";
+        const apiUrl = process.env.NEXT_PUBLIC_CMS_API_URL || "https://cms-h37b.onrender.com/api/v1";
         const res = await fetch(`${apiUrl}/services`);
         const json = await res.json();
 
